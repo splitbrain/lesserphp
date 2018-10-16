@@ -65,8 +65,11 @@ fade {
   color1: #ff0000;
   color2: #0000ff;
   color3: #ffffff;
-  color4: #000000;
-  color5: #000000;
+  color4: #ffffff;
+  color5: #ffffff;
+}
+.luma {
+  color: 44.11161568%;
 }
 .percent {
   per: 50%;
