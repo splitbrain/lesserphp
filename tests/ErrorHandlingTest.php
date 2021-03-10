@@ -4,7 +4,7 @@ require_once __DIR__ . "/../lessc.inc.php";
 use PHPUnit\Framework\TestCase;
 
 class ErrorHandlingTest extends TestCase {
-	public function setUp() {
+	public function setUp(): void {
 		$this->less = new lessc();
 	}
 
@@ -13,109 +13,87 @@ class ErrorHandlingTest extends TestCase {
 		return $this->less->compile($source);
 	}
 
-	/**
-	 * @expectedException        Exception
-	 * @expectedExceptionMessage .parametric-mixin is undefined
-	 */
-	public function testRequiredParametersMissing() {
-		$this->compile(
+    public function testRequiredParametersMissing() {
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage(".parametric-mixin is undefined");
+        $this->compile(
 			'.parametric-mixin (@a, @b) { a: @a; b: @b; }',
 			'.selector { .parametric-mixin(12px); }'
 		);
 	}
 
-	/**
-	 * @expectedException        Exception
-	 * @expectedExceptionMessage .parametric-mixin is undefined
-	 */
-	public function testTooManyParameters() {
-		$this->compile(
+    public function testTooManyParameters() {
+        $this->expectExceptionMessage(".parametric-mixin is undefined");
+        $this->expectException(Exception::class);
+        $this->compile(
 			'.parametric-mixin (@a, @b) { a: @a; b: @b; }',
 			'.selector { .parametric-mixin(12px, 13px, 14px); }'
 		);
 	}
 
-	/**
-	 * @expectedException        Exception
-	 * @expectedExceptionMessage unrecognised input
-	 */
-	public function testRequiredArgumentsMissing() {
-		$this->compile('.selector { rule: e(); }');
+    public function testRequiredArgumentsMissing() {
+        $this->expectExceptionMessage("unrecognised input");
+        $this->expectException(Exception::class);
+        $this->compile('.selector { rule: e(); }');
 	}
 
-	/**
-	 * @expectedException        Exception
-	 * @expectedExceptionMessage variable @missing is undefined
-	 */
-	public function testVariableMissing() {
-		$this->compile('.selector { rule: @missing; }');
+    public function testVariableMissing() {
+        $this->expectExceptionMessage("variable @missing is undefined");
+        $this->expectException(Exception::class);
+        $this->compile('.selector { rule: @missing; }');
 	}
 
-	/**
-	 * @expectedException        Exception
-	 * @expectedExceptionMessage .missing-mixin is undefined
-	 */
-	public function testMixinMissing() {
-		$this->compile('.selector { .missing-mixin; }');
+    public function testMixinMissing() {
+        $this->expectExceptionMessage(".missing-mixin is undefined");
+        $this->expectException(Exception::class);
+        $this->compile('.selector { .missing-mixin; }');
 	}
 
-	/**
-	 * @expectedException        Exception
-	 * @expectedExceptionMessage .flipped is undefined
-	 */
-	public function testGuardUnmatchedValue() {
-		$this->compile(
+    public function testGuardUnmatchedValue() {
+        $this->expectExceptionMessage(".flipped is undefined");
+        $this->expectException(Exception::class);
+        $this->compile(
 			'.flipped(@x) when (@x =< 10) { rule: value; }',
 			'.selector { .flipped(12); }'
 		);
 	}
 
-	/**
-	 * @expectedException        Exception
-	 * @expectedExceptionMessage .colors-only is undefined
-	 */
-	public function testGuardUnmatchedType() {
-		$this->compile(
+    public function testGuardUnmatchedType() {
+        $this->expectExceptionMessage(".colors-only is undefined");
+        $this->expectException(Exception::class);
+        $this->compile(
 			'.colors-only(@x) when (iscolor(@x)) { rule: value; }',
 			'.selector { .colors-only("string value"); }'
 		);
 	}
 
-    /**
-     * @expectedException		Exception
-     * @expectedExceptionMessage	expecting at least 1 arguments, got 0
-     */
     public function testMinNoArguments() {
+        $this->expectExceptionMessage("expecting at least 1 arguments, got 0");
+        $this->expectException(Exception::class);
         $this->compile(
             '.selector{ min: min(); }'
         );
     }
 
-    /**
-     * @expectedException		Exception
-     * @expectedExceptionMessage	expecting at least 1 arguments, got 0
-     */
     public function testMaxNoArguments() {
+        $this->expectExceptionMessage("expecting at least 1 arguments, got 0");
+        $this->expectException(Exception::class);
         $this->compile(
             '.selector{ max: max(); }'
         );
     }
 
-    /**
-     * @expectedException		Exception
-     * @expectedExceptionMessage	Cannot convert % to px
-     */
     public function testMaxIncompatibleTypes() {
+        $this->expectExceptionMessage("Cannot convert % to px");
+        $this->expectException(Exception::class);
         $this->compile(
             '.selector{ max: max( 10px, 5% ); }'
         );
     }
 
-    /**
-     * @expectedException		Exception
-     * @expectedExceptionMessage	Cannot convert px to s
-     */
     public function testConvertIncompatibleTypes() {
+        $this->expectExceptionMessage("Cannot convert px to s");
+        $this->expectException(Exception::class);
         $this->compile(
             '.selector{ convert: convert( 10px, s ); }'
         );
