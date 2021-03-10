@@ -5,7 +5,7 @@ require_once __DIR__ . "/../lessc.inc.php";
 use PHPUnit\Framework\TestCase;
 
 class ApiTest extends TestCase {
-	public function setUp() {
+	public function setUp(): void {
 		$this->less = new lessc();
 		$this->less->importDir = array(__DIR__ . "/inputs/test-imports");
 	}
