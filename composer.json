@@ -1,17 +1,17 @@
 {
-    "name": "mjphaynes/lessphp",
+    "name": "ca-dsgn/lessphp",
     "type": "library",
     "description": "lessphp is a compiler for LESS written in PHP.",
-    "homepage": "http://leafo.net/lessphp/",
+    "homepage": "https://www.ca-design.com",
     "license": [
         "MIT",
         "GPL-3.0"
     ],
     "authors": [
         {
-            "name": "Leaf Corcoran",
-            "email": "leafot@gmail.com",
-            "homepage": "http://leafo.net"
+            "name": "Christian Albert",
+            "email": "mail@ca-design.com",
+            "homepage": "https://www.ca-design.com"
         }
     ],
     "bin": [
