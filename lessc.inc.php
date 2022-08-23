@@ -38,7 +38,7 @@
  * handling things like indentation.
  */
 class lessc {
-    static public $VERSION = "v0.5.0";
+    static public $VERSION = "v0.7.0";
 
     static public $TRUE = array("keyword", "true");
     static public $FALSE = array("keyword", "false");
@@ -1669,7 +1669,7 @@ class lessc {
                 $width = strlen($colorStr) == 3 ? 16 : 256;
 
                 for ($i = 3; $i > 0; $i--) { // 3 2 1
-                    $t = intval($num % $width);
+                    $t = intval($num) % $width;
                     $num /= $width;
 
                     $c[$i] = $t * (256/$width) + $t * floor(16/$width);
