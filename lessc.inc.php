@@ -1,7 +1,7 @@
 <?php /** @noinspection PhpMissingFieldTypeInspection */
 
 /**
- * lessphp v0.6.0
+ * lessphp v0.8.0
  * http://leafo.net/lessphp
  *
  * LESS CSS compiler, adapted from http://lesscss.org
@@ -41,6 +41,13 @@
 class lessc
 {
     public static $VERSION = "v0.6.0";
+
+    public $eatWhiteDefault;
+    public $lessc;
+    public $parser;
+    public $env;
+    public $scope;
+    public $formatter;
 
     public static $TRUE = array("keyword", "true");
     public static $FALSE = array("keyword", "false");
@@ -1510,7 +1517,7 @@ class lessc
                     $name = $name . ": ";
                 }
 
-                $this->throwError("${name}expecting $expectedArgs arguments, got $numValues");
+                $this->throwError("{$name}expecting $expectedArgs arguments, got $numValues");
             }
 
             return $values;
@@ -1883,7 +1890,7 @@ class lessc
         }
 
         // type based operators
-        $fname = "op_${ltype}_${rtype}";
+        $fname = "op_{$ltype}_{$rtype}";
         if (is_callable(array($this, $fname))) {
             $out = $this->$fname($op, $left, $right);
             if (!is_null($out)) return $out;
@@ -2684,7 +2691,19 @@ class lessc
 // syntax tree
 class lessc_parser
 {
-    protected static $nextBlockId = 0; // used to uniquely identify blocks
+
+    public $eatWhiteDefault;
+    public $lessc;
+    public $sourceName;
+    public $writeComments;
+    public $count;
+    public $line;
+    public $env;
+    public $buffer;
+    public $seenComments;
+    public $inExp;
+
+    static protected $nextBlockId = 0; // used to uniquely identify blocks
 
     protected static $precedence = array(
         '=<' => 0,
@@ -4248,4 +4267,5 @@ class lessc_formatter_lessjs extends lessc_formatter_classic
     public $breakSelectors = true;
     public $assignSeparator = ": ";
     public $selectorSeparator = ",";
+    public $indentLevel;
 }
