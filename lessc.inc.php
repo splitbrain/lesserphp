@@ -1,7 +1,7 @@
 <?php
 
 /**
- * lessphp v0.5.0
+ * lessphp v0.8.0
  * http://leafo.net/lessphp
  *
  * LESS CSS compiler, adapted from http://lesscss.org
@@ -38,7 +38,15 @@
  * handling things like indentation.
  */
 class lessc {
-    static public $VERSION = "v0.7.0";
+
+    public $eatWhiteDefault;
+    public $lessc;
+    public $parser;
+    public $env;
+    public $scope;
+    public $formatter;
+
+    static public $VERSION = "v0.8.0";
 
     static public $TRUE = array("keyword", "true");
     static public $FALSE = array("keyword", "false");
@@ -1363,7 +1371,7 @@ class lessc {
                     $name = $name . ": ";
                 }
 
-                $this->throwError("${name}expecting $expectedArgs arguments, got $numValues");
+                $this->throwError("{$name}expecting $expectedArgs arguments, got $numValues");
             }
 
             return $values;
@@ -1745,7 +1753,7 @@ class lessc {
         }
 
         // type based operators
-        $fname = "op_${ltype}_${rtype}";
+        $fname = "op_{$ltype}_{$rtype}";
         if (is_callable(array($this, $fname))) {
             $out = $this->$fname($op, $left, $right);
             if (!is_null($out)) return $out;
@@ -2378,6 +2386,18 @@ class lessc {
 // responsible for taking a string of LESS code and converting it into a
 // syntax tree
 class lessc_parser {
+
+    public $eatWhiteDefault;
+    public $lessc;
+    public $sourceName;
+    public $writeComments;
+    public $count;
+    public $line;
+    public $env;
+    public $buffer;
+    public $seenComments;
+    public $inExp;
+
     static protected $nextBlockId = 0; // used to uniquely identify blocks
 
     static protected $precedence = array(
@@ -3877,4 +3897,5 @@ class lessc_formatter_lessjs extends lessc_formatter_classic {
     public $breakSelectors = true;
     public $assignSeparator = ": ";
     public $selectorSeparator = ",";
+    public $indentLevel;
 }
