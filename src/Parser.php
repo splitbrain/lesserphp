@@ -12,6 +12,7 @@
 namespace LesserPHP;
 
 use Exception;
+use LesserPHP\Utils\Util;
 use stdClass;
 
 /**
@@ -101,12 +102,12 @@ class Parser
 
         if (!self::$operatorString) {
             self::$operatorString =
-                '(' . implode('|', array_map([Lessc::class, 'preg_quote'],
+                '(' . implode('|', array_map([Util::class, 'pregQuote'],
                     array_keys(self::$precedence))) . ')';
 
-            $commentSingle = Lessc::preg_quote(self::$commentSingle);
-            $commentMultiLeft = Lessc::preg_quote(self::$commentMultiLeft);
-            $commentMultiRight = Lessc::preg_quote(self::$commentMultiRight);
+            $commentSingle = Util::pregQuote(self::$commentSingle);
+            $commentMultiLeft = Util::pregQuote(self::$commentMultiLeft);
+            $commentMultiRight = Util::pregQuote(self::$commentMultiRight);
 
             self::$commentMulti = $commentMultiLeft . '.*?' . $commentMultiRight;
             self::$whitePattern = '/' . $commentSingle . '[^\n]*\s*|(' . self::$commentMulti . ')\s*|\s+/Ais';
@@ -348,7 +349,7 @@ class Parser
     {
         // TODO: cache pattern in parser
         $pattern = implode("|",
-            array_map([Lessc::class, "preg_quote"], $directives));
+            array_map([Util::class, "pregQuote"], $directives));
         $pattern = '/^(-[a-z-]+-)?(' . $pattern . ')$/i';
 
         return preg_match($pattern, $dirname);
@@ -644,7 +645,7 @@ class Parser
         $this->eatWhiteDefault = false;
 
         $stop = ["'", '"', "@{", $end];
-        $stop = array_map([Lessc::class, "preg_quote"], $stop);
+        $stop = array_map([Util::class, "pregQuote"], $stop);
         // $stop[] = self::$commentMulti;
 
         if (!is_null($rejectStrs)) {
@@ -720,7 +721,7 @@ class Parser
         $content = [];
 
         // look for either ending delim , escape, or string interpolation
-        $patt = '([^\n]*?)(@\{|\\\\|' . Lessc::preg_quote($delim) . ')';
+        $patt = '([^\n]*?)(@\{|\\\\|' . Util::pregQuote($delim) . ')';
 
         $oldWhite = $this->eatWhiteDefault;
         $this->eatWhiteDefault = false;
@@ -1263,7 +1264,7 @@ class Parser
         }
 
         if (!isset(self::$literalCache[$what])) {
-            self::$literalCache[$what] = Lessc::preg_quote($what);
+            self::$literalCache[$what] = Util::pregQuote($what);
         }
 
         return $this->match(self::$literalCache[$what], $m, $eatWhitespace);
