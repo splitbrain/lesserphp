@@ -187,7 +187,8 @@ class Lessc
             if (isset($parentBlock->children[$childName])) {
                 $parentBlock->children[$childName] = array_merge(
                     $parentBlock->children[$childName],
-                    $child);
+                    $child
+                );
             } else {
                 $parentBlock->children[$childName] = $child;
             }
@@ -718,8 +719,13 @@ class Lessc
             } else {
                 $matches = [];
                 foreach ($blocks as $subBlock) {
-                    $subMatches = $this->findBlocks($subBlock,
-                        array_slice($path, 1), $orderedArgs, $keywordArgs, $seen);
+                    $subMatches = $this->findBlocks(
+                        $subBlock,
+                        array_slice($path, 1),
+                        $orderedArgs,
+                        $keywordArgs,
+                        $seen
+                    );
 
                     if (!is_null($subMatches)) {
                         foreach ($subMatches as $sm) {
@@ -797,8 +803,10 @@ class Lessc
                 if ($name[0] == $this->vPrefix) {
                     $this->set($name, $value);
                 } else {
-                    $out->lines[] = $this->formatter->property($name,
-                        $this->compileValue($this->reduce($value)));
+                    $out->lines[] = $this->formatter->property(
+                        $name,
+                        $this->compileValue($this->reduce($value))
+                    );
                 }
                 break;
             case 'block':
@@ -1052,7 +1060,6 @@ class Lessc
 
             while (count($hsl) < 4) $hsl[] = 0;
             return Color::toRGB($hsl);
-
         } elseif ($fname == 'rgb' || $fname == 'rgba') {
             $components = [];
             $i = 1;
@@ -1301,8 +1308,11 @@ class Lessc
     {
         if ($rgt[0] == '%') $rgt[1] /= 100;
 
-        return $this->op_color_color($op, $lft,
-            array_fill(1, count($lft) - 1, $rgt[1]));
+        return $this->op_color_color(
+            $op,
+            $lft,
+            array_fill(1, count($lft) - 1, $rgt[1])
+        );
     }
 
     /**
@@ -1666,7 +1676,6 @@ class Lessc
             // we were given initially.
             return $in;
         }
-
     }
 
     /**
@@ -1806,5 +1815,4 @@ class Lessc
         }
         return $less->cachedCompile($in, $force);
     }
-
 }

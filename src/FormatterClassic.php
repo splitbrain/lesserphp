@@ -85,7 +85,6 @@ class FormatterClassic
                 echo $this->open . $this->break;
                 $inner = $this->indentStr();
             }
-
         }
 
         if (!empty($block->lines)) {

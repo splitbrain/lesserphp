@@ -13,7 +13,7 @@ class Color
      * coerce a value for use in color operation
      * returns null if the value can't be used in color operations
      */
-    static public function coerceColor(array $value): ?array
+    public static function coerceColor(array $value): ?array
     {
         switch ($value[0]) {
             case 'color':
@@ -34,8 +34,8 @@ class Color
                 return $c;
             case 'keyword':
                 $name = $value[1];
-                if (isset(Constants::cssColors[$name])) {
-                    $rgba = explode(',', Constants::cssColors[$name]);
+                if (isset(Constants::CSS_COLORS[$name])) {
+                    $rgba = explode(',', Constants::CSS_COLORS[$name]);
 
                     if (isset($rgba[3]))
                         return ['color', $rgba[0], $rgba[1], $rgba[2], $rgba[3]];
@@ -50,7 +50,7 @@ class Color
     /**
      * Calculate the perceptual brightness of a color object
      */
-    static public function toLuma(array $color): float
+    public static function toLuma(array $color): float
     {
         [, $r, $g, $b] = Color::coerceColor($color);
 
@@ -68,7 +68,7 @@ class Color
     /**
      * Convert a color to HSL color space
      */
-    static public function toHSL(array $color): array
+    public static function toHSL(array $color): array
     {
         if ($color[0] == 'hsl') return $color;
 
@@ -116,7 +116,7 @@ class Color
      * Converts a hsl array into a color value in rgb.
      * Expects H to be in range of 0 to 360, S and L in 0 to 100
      */
-    static public function toRGB(array $color): array
+    public static function toRGB(array $color): array
     {
         if ($color[0] == 'color') return $color;
 
@@ -148,7 +148,7 @@ class Color
     /**
      * make sure a color's components don't go out of bounds
      */
-    static public function fixColor(array $c): array
+    public static function fixColor(array $c): array
     {
         foreach (range(1, 3) as $i) {
             if ($c[$i] < 0) $c[$i] = 0;
@@ -170,7 +170,7 @@ class Color
      *
      * @return float The calculated RGB value as percentage of the maximum value (255)
      */
-    static protected function calculateRGBComponent(float $comp, float $temp1, float $temp2): float
+    protected static function calculateRGBComponent(float $comp, float $temp1, float $temp2): float
     {
         // Normalize the component value to be within the range [0, 1]
         if ($comp < 0) $comp += 1.0;
@@ -184,5 +184,4 @@ class Color
         // Fallback return value, represents the case where the saturation of the color is zero
         return $temp1;
     }
-
 }

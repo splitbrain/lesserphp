@@ -102,8 +102,10 @@ class Parser
 
         if (!self::$operatorString) {
             self::$operatorString =
-                '(' . implode('|', array_map([Util::class, 'pregQuote'],
-                    array_keys(self::$precedence))) . ')';
+                '(' . implode('|', array_map(
+                    [Util::class, 'pregQuote'],
+                    array_keys(self::$precedence)
+                )) . ')';
 
             $commentSingle = Util::pregQuote(self::$commentSingle);
             $commentMultiLeft = Util::pregQuote(self::$commentMultiLeft);
@@ -348,8 +350,10 @@ class Parser
     protected function isDirective($dirname, $directives)
     {
         // TODO: cache pattern in parser
-        $pattern = implode("|",
-            array_map([Util::class, "pregQuote"], $directives));
+        $pattern = implode(
+            "|",
+            array_map([Util::class, "pregQuote"], $directives)
+        );
         $pattern = '/^(-[a-z-]+-)?(' . $pattern . ')$/i';
 
         return preg_match($pattern, $dirname);
@@ -421,8 +425,14 @@ class Parser
             // whitespace after the operator for it to be an expression
             $needWhite = $whiteBefore && !$this->inParens;
 
-            if ($this->match(self::$operatorString . ($needWhite ? '\s' : ''), $m) && self::$precedence[$m[1]] >= $minP) {
-                if (!$this->inParens && isset($this->env->currentProperty) && $m[1] == "/" && empty($this->env->supressedDivision)) {
+            if (
+                $this->match(self::$operatorString . ($needWhite ? '\s' : ''), $m) &&
+                self::$precedence[$m[1]] >= $minP
+            ) {
+                if (
+                    !$this->inParens && isset($this->env->currentProperty) && $m[1] == "/" &&
+                    empty($this->env->supressedDivision)
+                ) {
                     foreach (self::$supressDivisionProps as $pattern) {
                         if (preg_match($pattern, $this->env->currentProperty)) {
                             $this->env->supressedDivision = true;
@@ -438,7 +448,10 @@ class Parser
                 if (!$this->value($rhs)) break;
 
                 // peek for next operator to see what to do with rhs
-                if ($this->peek(self::$operatorString, $next) && self::$precedence[$next[1]] > self::$precedence[$m[1]]) {
+                if (
+                    $this->peek(self::$operatorString, $next) &&
+                    self::$precedence[$next[1]] > self::$precedence[$m[1]]
+                ) {
                     $rhs = $this->expHelper($rhs, self::$precedence[$next[1]]);
                 }
 
@@ -591,7 +604,14 @@ class Parser
         $expressions = null;
         $parts = [];
 
-        if (($this->literal("only") && ($only = true) || $this->literal("not") && ($not = true) || true) && $this->keyword($mediaType)) {
+        if (
+            (
+                $this->literal("only") && ($only = true) ||
+                $this->literal("not") && ($not = true) ||
+                true
+            ) &&
+            $this->keyword($mediaType)
+        ) {
             $prop = ["mediaType"];
             if (isset($only)) $prop[] = "only";
             if (isset($not)) $prop[] = "not";
@@ -895,7 +915,6 @@ class Parser
                                 $newArg = ["lit", $newList];
                                 break;
                         }
-
                     } elseif ($values) { // 1 item
                         $newArg = $values[0];
                     }
@@ -1493,5 +1512,4 @@ class Parser
 
         return $out . $text;
     }
-
 }

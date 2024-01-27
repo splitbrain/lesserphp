@@ -11,7 +11,7 @@ class Asserts
      *
      * @throws Exception
      */
-    static public function assertArgs($value, $expectedArgs, $name = "")
+    public static function assertArgs($value, $expectedArgs, $name = "")
     {
         if ($expectedArgs == 1) {
             return $value;
@@ -38,7 +38,7 @@ class Asserts
      *
      * @throws Exception
      */
-    static public function assertMinArgs($value, $expectedMinArgs, $name = "")
+    public static function assertMinArgs($value, $expectedMinArgs, $name = "")
     {
         if ($value[0] !== "list" || $value[1] != ",") {
             throw new Exception("expecting list");
@@ -63,7 +63,7 @@ class Asserts
      * @param string $error The error message to throw
      * @throws Exception
      */
-    static public function assertNumber(array $value, string $error = "expecting number"): float
+    public static function assertNumber(array $value, string $error = "expecting number"): float
     {
         if ($value[0] == "number") return (float)$value[1];
         throw new Exception($error);
@@ -72,12 +72,10 @@ class Asserts
     /**
      * @throws Exception
      */
-    static public function assertColor(array $value, $error = "expected color value"): array
+    public static function assertColor(array $value, $error = "expected color value"): array
     {
         $color = Color::coerceColor($value);
         if (is_null($color)) throw new Exception($error);
         return $color;
     }
-
-
 }

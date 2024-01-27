@@ -22,5 +22,4 @@ abstract class AbstractFunctionCollection
      * @return array [name => callable]
      */
     abstract public function getFunctions(): array;
-
 }

@@ -112,5 +112,4 @@ class Misc extends AbstractFunctionCollection
 
     // get-unit is missing
     // svg-gradient is missing
-
 }

@@ -271,5 +271,4 @@ class Math extends AbstractFunctionCollection
 
         return $values[$max_index];
     }
-
 }

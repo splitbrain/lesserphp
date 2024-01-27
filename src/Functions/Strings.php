@@ -68,8 +68,12 @@ class Strings extends AbstractFunctionCollection
 
                 $i++;
                 $rep = $this->lessc->compileValue($this->lessc->unwrap($val));
-                $template = preg_replace('/' . Util::pregQuote($match) . '/',
-                    $rep, $template, 1);
+                $template = preg_replace(
+                    '/' . Util::pregQuote($match) . '/',
+                    $rep,
+                    $template,
+                    1
+                );
             }
         }
 
