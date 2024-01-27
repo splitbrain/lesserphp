@@ -1,11 +1,13 @@
 <?php
-require_once __DIR__ . "/../lessc.inc.php";
+namespace LesserPHP\tests;
 
+use Exception;
+use LesserPHP\Lessc;
 use PHPUnit\Framework\TestCase;
 
 class ErrorHandlingTest extends TestCase {
     public function setUp(): void {
-        $this->less = new lessc();
+        $this->less = new Lessc();
     }
 
     public function compile() {

@@ -20,9 +20,11 @@
         }
 
     ],
-    "bin": ["plessc"],
     "autoload": {
-        "classmap": ["lessc.inc.php"]
+        "psr-4": {
+            "LesserPHP\\": "src",
+            "LesserPHP\\tests\\": "tests"
+        }
     },
     "require": {
         "php": ">=7.4"

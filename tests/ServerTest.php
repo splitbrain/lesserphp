@@ -1,5 +1,8 @@
 <?php
 
+namespace LesserPHP\tests;
+
+use LesserPHP\Lessc;
 use PHPUnit\Framework\TestCase;
 
 class ServerTest extends TestCase
@@ -7,7 +10,7 @@ class ServerTest extends TestCase
 
     public function testCheckedCachedCompile()
     {
-        $server = new lessc();
+        $server = new Lessc();
         $server->setImportDir(__DIR__ . '/inputs/test-imports/');
         $css = $server->checkedCachedCompile(__DIR__ . '/inputs/import.less', '/tmp/less.css');
 

@@ -1,7 +1,8 @@
 <?php
 
-require_once __DIR__ . "/../lessc.inc.php";
+namespace LesserPHP\tests;
 
+use LesserPHP\Lessc;
 use PHPUnit\Framework\TestCase;
 
 // Runs all the tests in inputs/ and compares their output to ouputs/
@@ -23,7 +24,7 @@ class InputTest extends TestCase {
     );
 
     public function setUp(): void {
-        $this->less = new lessc();
+        $this->less = new Lessc();
         $this->less->importDir = array_map(function($path) {
             return __DIR__ . "/" . $path;
         }, self::$importDirs);

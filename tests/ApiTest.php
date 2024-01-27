@@ -1,12 +1,13 @@
 <?php
 
-require_once __DIR__ . "/../lessc.inc.php";
+namespace LesserPHP\tests;
 
+use LesserPHP\Lessc;
 use PHPUnit\Framework\TestCase;
 
 class ApiTest extends TestCase {
     public function setUp(): void {
-        $this->less = new lessc();
+        $this->less = new Lessc();
         $this->less->importDir = array(__DIR__ . "/inputs/test-imports");
     }
 
