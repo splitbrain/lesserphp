@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection PhpMissingFieldTypeInspection */
 
 /**
  * lessphp v0.6.0
@@ -3206,6 +3206,7 @@ class lessc_parser
             $out = array("import", $value);
             return true;
         }
+        return false;
     }
 
     protected function mediaQueryList(&$out)
@@ -3456,6 +3457,9 @@ class lessc_parser
         $delim = ",";
         $method = "expressionList";
 
+        $value = null;
+        $rhs = null;
+
         $isVararg = false;
         while (true) {
             if ($this->literal("...")) {
@@ -3659,7 +3663,9 @@ class lessc_parser
 
         $hasExpression = false;
         $parts = array();
-        while ($this->tagBracket($parts, $hasExpression));
+        while ($this->tagBracket($parts, $hasExpression)){
+            // no-op
+        };
 
         $oldWhite = $this->eatWhiteDefault;
         $this->eatWhiteDefault = false;
@@ -3669,7 +3675,9 @@ class lessc_parser
                 $parts[] = $m[1];
                 if ($simple) break;
 
-                while ($this->tagBracket($parts, $hasExpression));
+                while ($this->tagBracket($parts, $hasExpression)) {
+                    // no-op
+                };
                 continue;
             }
 
@@ -3897,6 +3905,7 @@ class lessc_parser
     {
         $s = $this->seek();
         $items = array();
+        $value = null;
         while ($this->$parseItem($value)) {
             $items[] = $value;
             if ($delim) {
