@@ -1,4 +1,4 @@
-<?php /** @noinspection PhpMissingReturnTypeInspection */
+<?php
 /** @noinspection PhpMissingFieldTypeInspection */
 
 /**
@@ -95,7 +95,13 @@ class lessc
         return null;
     }
 
-    protected function fileExists($name)
+    /**
+     * Check if a given file exists and is actually a file
+     * 
+     * @param string $name file path
+     * @return bool
+     */
+    protected function fileExists(string $name): bool
     {
         return is_file($name);
     }
@@ -974,54 +980,75 @@ class lessc
     }
 
     /**
+     * Returns the value of the first argument raised to the power of the second argument.
+     *
+     * @link https://lesscss.org/functions/#math-functions-pow
      * @throws Exception
      */
-    protected function lib_pow($args)
+    protected function lib_pow(array $args): array
     {
         [$base, $exp] = $this->assertArgs($args, 2, "pow");
         return array("number", pow($this->assertNumber($base), $this->assertNumber($exp)), $args[2][0][2]);
     }
 
-    protected function lib_pi()
+    /**
+     * Return the value of pi
+     *
+     * @link https://lesscss.org/functions/#math-functions-pi
+     */
+    protected function lib_pi(): float
     {
         return pi();
     }
 
     /**
+     * Returns the value of the first argument modulus second argument.
+     *
+     * @link https://lesscss.org/functions/#math-functions-mod
      * @throws Exception
      */
-    protected function lib_mod($args)
+    protected function lib_mod(array $args): array
     {
         [$a, $b] = $this->assertArgs($args, 2, "mod");
         return array("number", $this->assertNumber($a) % $this->assertNumber($b), $args[2][0][2]);
     }
 
     /**
+     * Convert a number from one unit into another
+     *
+     * @link https://lesscss.org/functions/#misc-functions-convert
      * @throws Exception
      */
-    protected function lib_convert($args)
+    protected function lib_convert(array $args): array
     {
         [$value, $to] = $this->assertArgs($args, 2, "convert");
 
         // If it's a keyword, grab the string version instead
-        if (is_array($to) && $to[0] == "keyword")
+        if (is_array($to) && $to[0] == "keyword") {
             $to = $to[1];
+        }
 
         return $this->convert($value, $to);
     }
 
     /**
+     * Calculates absolute value of a number. Keeps units as they are.
+     *
+     * @link https://lesscss.org/functions/#math-functions-abs
      * @throws Exception
      */
-    protected function lib_abs($num)
+    protected function lib_abs(array $num): array
     {
         return array("number", abs($this->assertNumber($num)), $num[2]);
     }
 
     /**
+     * Returns the lowest of one or more values
+     * 
+     * @link https://lesscss.org/functions/#math-functions-min
      * @throws Exception
      */
-    protected function lib_min($args)
+    protected function lib_min(array $args): array
     {
         $values = $this->assertMinArgs($args, 1, "min");
 
@@ -1043,9 +1070,12 @@ class lessc
     }
 
     /**
+     * Returns the highest of one or more values
+     *
+     * @link https://lesscss.org/functions/#math-functions-max
      * @throws Exception
      */
-    protected function lib_max($args)
+    protected function lib_max(array $args): array
     {
         $values = $this->assertMinArgs($args, 1, "max");
 
@@ -1067,68 +1097,92 @@ class lessc
     }
 
     /**
+     * Calculates tangent function
+     *
+     * @link https://lesscss.org/functions/#math-functions-tan
      * @throws Exception
      */
-    protected function lib_tan($num)
+    protected function lib_tan(array $num): float
     {
         return tan($this->assertNumber($num));
     }
 
     /**
+     * Calculates sine function
+     *
+     * @link https://lesscss.org/functions/#math-functions-sin
      * @throws Exception
      */
-    protected function lib_sin($num)
+    protected function lib_sin(array $num): float
     {
         return sin($this->assertNumber($num));
     }
 
     /**
+     * Calculates cosine function
+     *
+     * @link https://lesscss.org/functions/#math-functions-cos
      * @throws Exception
      */
-    protected function lib_cos($num)
+    protected function lib_cos(array $num): float
     {
         return cos($this->assertNumber($num));
     }
 
     /**
+     * Calculates arctangent function
+     *
+     * @link https://lesscss.org/functions/#math-functions-atan
      * @throws Exception
      */
-    protected function lib_atan($num)
+    protected function lib_atan(array $num): array
     {
         $num = atan($this->assertNumber($num));
         return array("number", $num, "rad");
     }
 
     /**
+     * Calculates arcsine function
+     *
+     * @link https://lesscss.org/functions/#math-functions-asin
      * @throws Exception
      */
-    protected function lib_asin($num)
+    protected function lib_asin(array $num): array
     {
         $num = asin($this->assertNumber($num));
         return array("number", $num, "rad");
     }
 
     /**
+     * Calculates arccosine function
+     *
+     * @link https://lesscss.org/functions/#math-functions-acos
      * @throws Exception
      */
-    protected function lib_acos($num)
+    protected function lib_acos(array $num): array
     {
         $num = acos($this->assertNumber($num));
         return array("number", $num, "rad");
     }
 
     /**
+     * Calculates square root of a number
+     *
+     * @link https://lesscss.org/functions/#math-functions-sqrt
      * @throws Exception
      */
-    protected function lib_sqrt($num)
+    protected function lib_sqrt(array $num): float
     {
         return sqrt($this->assertNumber($num));
     }
 
     /**
+     * Returns the value at a specified position in a list
+     *
+     * @link https://lesscss.org/functions/#list-functions-extract
      * @throws Exception
      */
-    protected function lib_extract($value)
+    protected function lib_extract(array $value)
     {
         [$list, $idx] = $this->assertArgs($value, 2, "extract");
         $idx = $this->assertNumber($idx);
@@ -1136,52 +1190,98 @@ class lessc
         if ($list[0] == "list" && isset($list[2][$idx - 1])) {
             return $list[2][$idx - 1];
         }
+
+        // FIXME what is the expected behavior here? Apparently it's not an error?
     }
 
-    protected function lib_isnumber($value)
+    /**
+     * Returns true if a value is a number, false otherwise
+     *
+     * @link https://lesscss.org/functions/#type-functions-isnumber
+     */
+    protected function lib_isnumber(array $value): array
     {
         return $this->toBool($value[0] == "number");
     }
 
-    protected function lib_isstring($value)
+    /**
+     * Returns true if a value is a string, false otherwise
+     *
+     * @link https://lesscss.org/functions/#type-functions-isstring
+     */
+    protected function lib_isstring(array $value): array
     {
         return $this->toBool($value[0] == "string");
     }
 
-    protected function lib_iscolor($value)
+    /**
+     * Returns true if a value is a color, false otherwise
+     *
+     * @link https://lesscss.org/functions/#type-functions-iscolor
+     */
+    protected function lib_iscolor(array $value): array
     {
         return $this->toBool($this->coerceColor($value));
     }
 
-    protected function lib_iskeyword($value)
+    /**
+     * Returns true if a value is a keyword, false otherwise
+     *
+     * @link https://lesscss.org/functions/#type-functions-iskeyword
+     */
+    protected function lib_iskeyword(array $value): array
     {
         return $this->toBool($value[0] == "keyword");
     }
 
-    protected function lib_ispixel($value)
+    /**
+     * Returns true if a value is a number in pixels, false otherwise
+     *
+     * @link https://lesscss.org/functions/#type-functions-ispixel
+     */
+    protected function lib_ispixel(array $value): array
     {
         return $this->toBool($value[0] == "number" && $value[2] == "px");
     }
 
-    protected function lib_ispercentage($value)
+    /**
+     * Returns true if a value is a percentage, false otherwise
+     *
+     * @link https://lesscss.org/functions/#type-functions-ispercentage
+     */
+    protected function lib_ispercentage(array $value): array
     {
         return $this->toBool($value[0] == "number" && $value[2] == "%");
     }
 
-    protected function lib_isem($value)
+    /**
+     * Returns true if a value is an em value, false otherwise
+     *
+     * @link https://lesscss.org/functions/#type-functions-isem
+     */
+    protected function lib_isem(array $value): array
     {
         return $this->toBool($value[0] == "number" && $value[2] == "em");
     }
 
-    protected function lib_isrem($value)
+    /**
+     * Returns true if a value is an rem value, false otherwise
+     *
+     * This method does not exist in the official less.js implementation
+     */
+    protected function lib_isrem(array $value): array
     {
         return $this->toBool($value[0] == "number" && $value[2] == "rem");
     }
 
     /**
+     * Creates a hex representation of a color in #AARRGGBB format (NOT #RRGGBBAA!)
+     *
+     * This method does not exist in the official less.js implementation
+     * @see lib_argb
      * @throws Exception
      */
-    protected function lib_rgbahex($color)
+    protected function lib_rgbahex(array $color): string
     {
         $color = $this->coerceColor($color);
         if (is_null($color))
@@ -1193,9 +1293,12 @@ class lessc
     }
 
     /**
+     * Creates a hex representation of a color in #AARRGGBB format (NOT #RRGGBBAA!)
+     *
+     * @https://lesscss.org/functions/#color-definition-argb
      * @throws Exception
      */
-    protected function lib_argb($color)
+    protected function lib_argb(array $color): string
     {
         return $this->lib_rgbahex($color);
     }
@@ -1206,7 +1309,7 @@ class lessc
      * @param array $value either an argument list (two strings) or a single string
      * @return string        formatted url(), either as a link or base64-encoded
      */
-    protected function lib_data_uri($value)
+    protected function lib_data_uri(array $value): string
     {
         $mime = ($value[0] === 'list') ? $value[2][0][2] : null;
         $url = ($value[0] === 'list') ? $value[2][1][2][0] : $value[2][0];
@@ -1235,10 +1338,12 @@ class lessc
     }
 
     /**
-     * utility func to unquote a string
+     * Utility func to unquote a string
+     *
+     * @link https://lesscss.org/functions/#string-functions-e
      * @throws Exception
      */
-    protected function lib_e($arg)
+    protected function lib_e(array $arg): array
     {
         switch ($arg[0]) {
             case "list":
@@ -1258,9 +1363,12 @@ class lessc
     }
 
     /**
+     * Formats a string
+     *
+     * @link https://lesscss.org/functions/#string-functions--format
      * @throws Exception
      */
-    protected function lib__sprintf($args)
+    protected function lib__sprintf(array $args) : array
     {
         if ($args[0] != "list") return $args;
         $values = $args[2];
@@ -1290,27 +1398,36 @@ class lessc
     }
 
     /**
+     * Rounds down to the next lowest integer
+     *
+     * @link https://lesscss.org/functions/#math-functions-floor
      * @throws Exception
      */
-    protected function lib_floor($arg)
+    protected function lib_floor(array $arg): array
     {
         $value = $this->assertNumber($arg);
         return array("number", floor($value), $arg[2]);
     }
 
     /**
+     * Rounds up to the next highest integer
+     *
+     * @link https://lesscss.org/functions/#math-functions-ceil
      * @throws Exception
      */
-    protected function lib_ceil($arg)
+    protected function lib_ceil(array $arg): array
     {
         $value = $this->assertNumber($arg);
         return array("number", ceil($value), $arg[2]);
     }
 
     /**
+     * Applies rounding
+     *
+     * @link https://lesscss.org/functions/#math-functions-round
      * @throws Exception
      */
-    protected function lib_round($arg)
+    protected function lib_round(array $arg): array
     {
         if ($arg[0] != "list") {
             $value = $this->assertNumber($arg);
@@ -1323,9 +1440,12 @@ class lessc
     }
 
     /**
+     * Remove or change the unit of a dimension
+     *
+     * @link https://lesscss.org/functions/#misc-functions-unit
      * @throws Exception
      */
-    protected function lib_unit($arg)
+    protected function lib_unit(array $arg): array
     {
         if ($arg[0] == "list") {
             [$number, $newUnit] = $arg[2];
@@ -1340,9 +1460,10 @@ class lessc
      * Helper function to get arguments for color manipulation functions.
      * takes a list that contains a color like thing and a percentage
      *
+     * @fixme explanation needs to be improved
      * @throws Exception
      */
-    public function colorArgs($args)
+    public function colorArgs(array $args): array
     {
         if ($args[0] != 'list' || count($args[2]) < 2) {
             return array(array('color', 0, 0, 0), 0);
@@ -1355,9 +1476,12 @@ class lessc
     }
 
     /**
+     * Decrease the lightness of a color in the HSL color space by an absolute amount
+     *
+     * @link https://lesscss.org/functions/#color-operations-darken
      * @throws Exception
      */
-    protected function lib_darken($args)
+    protected function lib_darken(array $args): array
     {
         [$color, $delta] = $this->colorArgs($args);
 
@@ -1367,9 +1491,12 @@ class lessc
     }
 
     /**
+     * Increase the lightness of a color in the HSL color space by an absolute amount
+     *
+     * @link https://lesscss.org/functions/#color-operations-lighten
      * @throws Exception
      */
-    protected function lib_lighten($args)
+    protected function lib_lighten(array $args): array
     {
         [$color, $delta] = $this->colorArgs($args);
 
@@ -1379,9 +1506,12 @@ class lessc
     }
 
     /**
+     * Increase the saturation of a color in the HSL color space by an absolute amount
+     *
+     * @link https://lesscss.org/functions/#color-operations-saturate
      * @throws Exception
      */
-    protected function lib_saturate($args)
+    protected function lib_saturate(array $args): array
     {
         [$color, $delta] = $this->colorArgs($args);
 
@@ -1391,9 +1521,12 @@ class lessc
     }
 
     /**
+     * Decrease the saturation of a color in the HSL color space by an absolute amount
+     *
+     * @link https://lesscss.org/functions/#color-operations-desaturate
      * @throws Exception
      */
-    protected function lib_desaturate($args)
+    protected function lib_desaturate(array $args): array
     {
         [$color, $delta] = $this->colorArgs($args);
 
@@ -1403,9 +1536,12 @@ class lessc
     }
 
     /**
+     * Rotate the hue angle of a color in either direction
+     *
+     * @link https://lesscss.org/functions/#color-operations-spin
      * @throws Exception
      */
-    protected function lib_spin($args)
+    protected function lib_spin(array $args): array
     {
         [$color, $delta] = $this->colorArgs($args);
 
@@ -1418,9 +1554,12 @@ class lessc
     }
 
     /**
+     * Increase the transparency (or decrease the opacity) of a color, making it less opaque
+     *
+     * @link https://lesscss.org/functions/#color-operations-fadeout
      * @throws Exception
      */
-    protected function lib_fadeout($args)
+    protected function lib_fadeout(array $args): array
     {
         [$color, $delta] = $this->colorArgs($args);
         $color[4] = $this->clamp(($color[4] ?? 1) - $delta / 100);
@@ -1428,9 +1567,12 @@ class lessc
     }
 
     /**
+     * Decrease the transparency (or increase the opacity) of a color, making it more opaque
+     *
+     * @link https://lesscss.org/functions/#color-operations-fadein
      * @throws Exception
      */
-    protected function lib_fadein($args)
+    protected function lib_fadein(array $args): array
     {
         [$color, $delta] = $this->colorArgs($args);
         $color[4] = $this->clamp(($color[4] ?? 1) + $delta / 100);
@@ -1438,48 +1580,64 @@ class lessc
     }
 
     /**
+     * Extracts the hue channel of a color object in the HSL color space
+     *
+     * @link https://lesscss.org/functions/#color-channel-hue
      * @throws Exception
      */
-    protected function lib_hue($color)
+    protected function lib_hue(array $color): int
     {
         $hsl = $this->toHSL($this->assertColor($color));
         return round($hsl[1]);
     }
 
     /**
+     * Extracts the saturation channel of a color object in the HSL color space
+     *
+     * @link https://lesscss.org/functions/#color-channel-saturation
      * @throws Exception
      */
-    protected function lib_saturation($color)
+    protected function lib_saturation(array $color): int
     {
         $hsl = $this->toHSL($this->assertColor($color));
         return round($hsl[2]);
     }
 
     /**
+     * Extracts the lightness channel of a color object in the HSL color space
+     *
+     * @link https://lesscss.org/functions/#color-channel-lightness
      * @throws Exception
      */
-    protected function lib_lightness($color)
+    protected function lib_lightness(array $color): int
     {
         $hsl = $this->toHSL($this->assertColor($color));
         return round($hsl[3]);
     }
 
     /**
-     * get the alpha of a color
-     * defaults to 1 for non-colors or colors without an alpha
+     * Extracts the alpha channel of a color object
+     *
+     * defaults to 1 for colors without an alpha
+     * non-colors return null
+     * @link https://lesscss.org/functions/#color-channel-alpha
      */
-    protected function lib_alpha($value)
+    protected function lib_alpha(array $value): ?float
     {
         if (!is_null($color = $this->coerceColor($value))) {
             return $color[4] ?? 1;
         }
+        return null;
     }
 
     /**
-     * set the alpha of the color
+     * Set the absolute opacity of a color.
+     * Can be applied to colors whether they already have an opacity value or not.
+     *
+     * @link https://lesscss.org/functions/#color-operations-fade
      * @throws Exception
      */
-    protected function lib_fade($args)
+    protected function lib_fade(array $args): array
     {
         [$color, $alpha] = $this->colorArgs($args);
         $color[4] = $this->clamp($alpha / 100.0);
@@ -1487,6 +1645,9 @@ class lessc
     }
 
     /**
+     * Converts a floating point number into a percentage string
+     *
+     * @link https://lesscss.org/functions/#math-functions-percentage
      * @throws Exception
      */
     protected function lib_percentage($arg)
@@ -1502,12 +1663,11 @@ class lessc
      *
      *     tint(@color, [@weight: 50%]);
      *
-     * http://lesscss.org/functions/#color-operations-tint
-     *
+     * @link https://lesscss.org/functions/#color-operations-tint
      * @throws Exception
      * @return array Color
      */
-    protected function lib_tint($args)
+    protected function lib_tint(array $args): array
     {
         $white = ['color', 255, 255, 255];
         if ($args[0] == 'color') {
@@ -1526,12 +1686,11 @@ class lessc
      *
      *     shade(@color, [@weight: 50%]);
      *
-     * http://lesscss.org/functions/#color-operations-shade
-     *
+     * @link http://lesscss.org/functions/#color-operations-shade
      * @return array Color
      * @throws Exception
      */
-    protected function lib_shade($args)
+    protected function lib_shade(array $args): array
     {
         $black = ['color', 0, 0, 0];
         if ($args[0] == 'color') {
@@ -1546,11 +1705,11 @@ class lessc
     /**
      * mixes two colors by weight
      * mix(@color1, @color2, [@weight: 50%]);
-     *  http://sass-lang.com/docs/yardoc/Sass/Script/Functions.html#mix-instance_method
      *
+     * @link https://lesscss.org/functions/#color-operations-mix
      * @throws Exception
      */
-    protected function lib_mix($args)
+    protected function lib_mix(array $args): array
     {
         if ($args[0] != "list" || count($args[2]) < 2)
             $this->throwError("mix expects (color1, color2, weight)");
@@ -1588,9 +1747,12 @@ class lessc
     }
 
     /**
+     * Choose which of two colors provides the greatest contrast with another
+     *
+     * @link https://lesscss.org/functions/#color-operations-contrast
      * @throws Exception
      */
-    protected function lib_contrast($args)
+    protected function lib_contrast(array $args): array
     {
         $darkColor = array('color', 0, 0, 0);
         $lightColor = array('color', 255, 255, 255);
@@ -1629,7 +1791,10 @@ class lessc
         return $darkColor;
     }
 
-    protected function toLuma($color)
+    /**
+     * Calculate the perceptual brightness of a color object
+     */
+    protected function toLuma(array $color): float
     {
         list(, $r, $g, $b) = $this->coerceColor($color);
 
@@ -1644,7 +1809,13 @@ class lessc
         return (0.2126 * $r) + (0.7152 * $g) + (0.0722 * $b);
     }
 
-    protected function lib_luma($color)
+    /**
+     * Calculates the luma (perceptual brightness) of a color object
+     *
+     * @link https://lesscss.org/functions/#color-channel-luma
+     * @todo this seems not to check if the color is actually a color
+     */
+    protected function lib_luma(array $color): array
     {
         return array("number", round($this->toLuma($color) * 100, 8), "%");
     }
@@ -1660,11 +1831,15 @@ class lessc
     }
 
     /**
+     * Checks that the value is a number and returns it as float
+     * 
+     * @param array $value The parsed value triplet
+     * @param string $error The error message to throw
      * @throws Exception
      */
-    public function assertNumber($value, $error = "expecting number")
+    public function assertNumber(array $value, string $error = "expecting number") : float
     {
-        if ($value[0] == "number") return $value[1];
+        if ($value[0] == "number") return (float) $value[1];
         $this->throwError($error);
     }
 
@@ -1768,7 +1943,7 @@ class lessc
      * Converts a hsl array into a color value in rgb.
      * Expects H to be in range of 0 to 360, S and L in 0 to 100
      */
-    protected function toRGB($color)
+    protected function toRGB(array $color): array
     {
         if ($color[0] == 'color') return $color;
 
@@ -1977,8 +2152,11 @@ class lessc
     }
 
 
-    // coerce a value for use in color operation
-    protected function coerceColor($value)
+    /**
+     * coerce a value for use in color operation
+     * returns null if the value can't be used in color operations
+     */
+    protected function coerceColor(array $value): ?array
     {
         switch ($value[0]) {
             case 'color':
@@ -2009,6 +2187,7 @@ class lessc
                 }
                 return null;
         }
+        return null;
     }
 
     // make something string like into a string
@@ -2032,10 +2211,13 @@ class lessc
         return $value;
     }
 
-    public function toBool($a)
+    /**
+     * Return a boolean type triplet for a given boolean value
+     */
+    public function toBool($a) : array
     {
         if ($a) return self::$TRUE;
-        else return self::$FALSE;
+        return self::$FALSE;
     }
 
     /**
@@ -2107,7 +2289,7 @@ class lessc
     /**
      * @throws Exception
      */
-    protected function convert($number, $to)
+    protected function convert($number, $to) : array
     {
         $value = $this->assertNumber($number);
         $from = $number[2];
