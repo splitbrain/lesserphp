@@ -4401,7 +4401,7 @@ class lessc_parser
         if ($eatWhitespace === null) $eatWhitespace = $this->eatWhiteDefault;
 
         $r = '/' . $regex . ($eatWhitespace && !$this->writeComments ? '\s*' : '') . '/Ais';
-        if (preg_match($r, $this->buffer, $out, null, $this->count)) {
+        if (preg_match($r, $this->buffer, $out, 0, $this->count)) {
             $this->count += strlen($out[0]);
             if ($eatWhitespace && $this->writeComments) $this->whitespace();
             return true;
@@ -4414,7 +4414,7 @@ class lessc_parser
     {
         if ($this->writeComments) {
             $gotWhite = false;
-            while (preg_match(self::$whitePattern, $this->buffer, $m, null, $this->count)) {
+            while (preg_match(self::$whitePattern, $this->buffer, $m, 0, $this->count)) {
                 if (isset($m[1]) && empty($this->seenComments[$this->count])) {
                     $this->append(["comment", $m[1]]);
                     $this->seenComments[$this->count] = true;
@@ -4434,7 +4434,7 @@ class lessc_parser
     {
         if (is_null($from)) $from = $this->count;
         $r = '/' . $regex . '/Ais';
-        return preg_match($r, $this->buffer, $out, null, $from);
+        return preg_match($r, $this->buffer, $out, 0, $from);
     }
 
     // seek to a spot in the buffer or return where we are on no argument
