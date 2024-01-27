@@ -45,8 +45,6 @@ use stdClass;
  */
 class Lessc
 {
-    public static $VERSION = "v0.6.0";
-
     public Parser $parser;
     public $env;
     public $scope;

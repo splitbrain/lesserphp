@@ -1,9 +1,12 @@
-# lesserphp v0.6.0
+# lesserphp (reloaded)
 
 Originally written by Leaf Corcoran, obviously abandoned circa 2014
 https://github.com/leafo/lessphp
 
 Last version provided by Leaf was 0.5.0
+
+### No Version yet
+* 2024-01-27: Refactoring based on 0.6-dev branch and some cherry-picks from other repos
 
 ### v.0.6.0
 * 2021-03-10: adds php8-support and drops php5.x-support, pushing min requirement to php7.2

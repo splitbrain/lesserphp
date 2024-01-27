@@ -1,19 +1,19 @@
-[![Build Status](https://travis-ci.org/MarcusSchwarz/lesserphp.svg)](https://travis-ci.org/MarcusSchwarz/lesserphp)
+# lesserphp (reloaded)
 
-# lesserphp v0.6.0
-### <http://github.com/MarcusSchwarz/lesserphp>
+`lesserphp` is a compiler for LESS written in PHP. It is based on lessphp by @leafo. The original has been abandoned in 2014. The fork by @MarkusSchwarz has been mostly abandoned in 2021. There are other forks with dubious status.
 
-`lesserphp` is a compiler for LESS written in PHP. It is based on lessphp bei leafo.
-The documentation is great,
-so check it out: <http://leafo.net/lessphp/docs/>.
+This fork is meant to be a modern refactoring of the code, so it will be easier to maintain. It is mostly meant as a stable base for DokuWiki.
+
+This is a work in progress.
+
+Original documentation is available http://leafo.net/lessphp/docs/ but is probably out of date.
 
 Here's a quick tutorial:
 
 ### How to use in your PHP project
 
-The only file required is `lessc.inc.php`, so copy that to your include directory.
 
-The typical flow of **lesserphp** is to create a new instance of `lessc`,
+The typical flow of **lesserphp** is to create a new instance of `Lessc`,
 configure it how you like, then tell it to compile something using one built in
 compile methods.
 
@@ -21,9 +21,9 @@ The `compile` method compiles a string of LESS code to CSS.
 
 ```php
 <?php
-require "lessc.inc.php";
+require __DIR__ . '/vendor/autoload.php';
 
-$less = new lessc;
+$less = new Lessc;
 echo $less->compile(".block { padding: 3 + 4px }");
 ```
 
