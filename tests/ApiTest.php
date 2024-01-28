@@ -5,13 +5,16 @@ namespace LesserPHP\tests;
 use LesserPHP\Lessc;
 use PHPUnit\Framework\TestCase;
 
-class ApiTest extends TestCase {
-    public function setUp(): void {
+class ApiTest extends TestCase
+{
+    public function setUp(): void
+    {
         $this->less = new Lessc();
-        $this->less->importDir = array(__DIR__ . "/inputs/test-imports");
+        $this->less->importDir = [__DIR__ . "/test-data/less/lesserphp/imports"];
     }
 
-    public function testPreserveComments() {
+    public function testPreserveComments()
+    {
         $input = <<<EOD
 // what is going on?
 
@@ -27,20 +30,20 @@ Here is a block comment
 // this is a comment
 
 /*hello*/div /*yeah*/ { //surew
-	border: 1px solid red; // world
-	/* comment above the first occurrence of a duplicated rule */
-	color: url('http://mage-page.com');
-	string: "hello /* this is not a comment */";
-	world: "// neither is this";
-	/* comment above the second occurrence of a duplicated rule */
-	color: url('http://mage-page.com');
-	string: 'hello /* this is not a comment */' /*what if this is a comment */;
-	world: '// neither is this' // hell world;
-	;
-	/* duplicate comments are retained */
-	/* duplicate comments are retained */
-	what-ever: 100px;
-	background: url(/*this is not a comment?*/); // uhh what happens here
+    border: 1px solid red; // world
+    /* comment above the first occurrence of a duplicated rule */
+    color: url('http://mage-page.com');
+    string: "hello /* this is not a comment */";
+    world: "// neither is this";
+    /* comment above the second occurrence of a duplicated rule */
+    color: url('http://mage-page.com');
+    string: 'hello /* this is not a comment */' /*what if this is a comment */;
+    world: '// neither is this' // hell world;
+    ;
+    /* duplicate comments are retained */
+    /* duplicate comments are retained */
+    what-ever: 100px;
+    background: url(/*this is not a comment?*/); // uhh what happens here
 }
 EOD;
 
@@ -85,52 +88,60 @@ div {
 }
 EOD;
 
-        $this->assertEquals($this->compile($input), trim($outputWithoutComments));
+        $this->assertEquals(
+            trim($outputWithoutComments),
+            trim($this->less->compile($input))
+        );
         $this->less->setPreserveComments(true);
-        $this->assertEquals($this->compile($input), trim($outputWithComments));
+        $this->assertEquals(
+            trim($outputWithComments),
+            trim($this->less->compile($input)),
+        );
     }
 
-    public function testOldInterface() {
-        $this->less = new lessc(__DIR__ . "/inputs/hi.less");
-        $out = $this->less->parse(array("hello" => "10px"));
-        $this->assertEquals(trim($out), trim('
-div:before {
-  content: "hi!";
-}'));
+    public function testInjectVars()
+    {
+        $this->less->setVariables(
+            [
+                "color" => "red",
+                "base" => "960px"
+            ]
+        );
 
-    }
+        $out = $this->less->compile(".magic { color: @color;  width: @base - 200; }");
 
-    public function testInjectVars() {
-        $out = $this->less->parse(".magic { color: @color;  width: @base - 200; }",
-            array(
-                'color' => 'red',
-                'base' => '960px'
-            ));
-
-        $this->assertEquals(trim($out), trim("
+        $this->assertEquals(
+            trim("
 .magic {
   color: red;
   width: 760px;
-}"));
+}
+            "),
+            trim($out)
+        );
 
     }
 
-    public function testDisableImport() {
+    public function testDisableImport()
+    {
         $this->less->importDisabled = true;
         $this->assertEquals(
             "/* import disabled */",
-            $this->compile("@import 'file3';"));
+            trim($this->less->compile("@import 'file3';"))
+        );
     }
 
-    public function testUserFunction() {
-        $this->less->registerFunction("add-two", function($list) {
+    public function testUserFunction()
+    {
+        $this->less->registerFunction("add-two", function ($list) {
             list($a, $b) = $list[2];
             return $a[1] + $b[1];
         });
 
         $this->assertEquals(
-            $this->compile("result: add-two(10, 20);"),
-            "result: 30;");
+            "result: 30;",
+            trim($this->less->compile("result: add-two(10, 20);"))
+        );
 
         return $this->less;
     }
@@ -138,35 +149,41 @@ div:before {
     /**
      * @depends testUserFunction
      */
-    public function testUnregisterFunction($less) {
+    public function testUnregisterFunction($less)
+    {
         $less->unregisterFunction("add-two");
 
         $this->assertEquals(
-            $this->compile("result: add-two(10, 20);"),
-            "result: add-two(10,20);");
+            "result: add-two(10,20);",
+            trim($this->less->compile("result: add-two(10, 20);"))
+        );
     }
 
 
-
-    public function testFormatters() {
+    public function testFormatters()
+    {
         $src = "
-			div, pre {
-				color: blue;
-				span, .big, hello.world {
-					height: 20px;
-					color:#ffffff + #000;
-				}
-			}";
+            div, pre {
+                color: blue;
+                span, .big, hello.world {
+                    height: 20px;
+                    color:#ffffff + #000;
+                }
+            }";
 
         $this->less->setFormatter("compressed");
         $this->assertEquals(
-            $this->compile($src), "div,pre{color:blue;}div span,div .big,div hello.world,pre span,pre .big,pre hello.world{height:20px;color:#fff;}");
+            trim("
+div,pre{color:blue;}div span,div .big,div hello.world,pre span,pre .big,pre hello.world{height:20px;color:#fff;}
+            "),
+            trim($this->less->compile($src))
+        );
 
         // TODO: fix the output order of tags
         $this->less->setFormatter("lessjs");
         $this->assertEquals(
-            $this->compile($src),
-"div,
+            trim("
+div,
 pre {
   color: blue;
 }
@@ -178,22 +195,23 @@ pre .big,
 pre hello.world {
   height: 20px;
   color: #ffffff;
-}");
+}
+            "),
+            trim($this->less->compile($src))
+        );
 
         $this->less->setFormatter("classic");
         $this->assertEquals(
-            $this->compile($src),
-trim("div, pre { color:blue; }
+            trim("
+div, pre { color:blue; }
 div span, div .big, div hello.world, pre span, pre .big, pre hello.world {
   height:20px;
   color:#ffffff;
 }
-"));
-
+            "),
+            trim($this->less->compile($src))
+        );
     }
 
-    public function compile($str) {
-        return trim($this->less->parse($str));
-    }
 
 }
