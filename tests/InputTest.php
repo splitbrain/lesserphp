@@ -60,9 +60,8 @@ class InputTest extends TestCase
             $lessc->setVariables(json_decode(file_get_contents($inputBase . '.json'), true));
         }
 
-        $input = file_get_contents($inputBase . '.less');
         $output = file_get_contents($outputFile);
 
-        $this->assertEquals($output, $lessc->compile($input), "Failed test $name");
+        $this->assertEquals($output, $lessc->compileFile($inputBase.'.less'), "Failed test $name");
     }
 }

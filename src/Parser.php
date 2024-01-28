@@ -147,8 +147,9 @@ class Parser
         }
 
         // TODO report where the block was opened
-        if (!property_exists($this->env, 'parent') || !is_null($this->env->parent))
-            throw new Exception('parse error: unclosed block');
+        if (!property_exists($this->env, 'parent') || !is_null($this->env->parent)) {
+            $this->throwError('parse error: unclosed block');
+        }
 
         return $this->env;
     }
@@ -1385,29 +1386,33 @@ class Parser
     /* misc functions */
 
     /**
-     * @param string $msg
-     * @param $count
-     * @throws Exception
+     * Throw a parser exception
+     *
+     * This function tries to use the current parsing context to provide
+     * additional info on where/why the error occurred.
+     *
+     * @param string $msg The error message to throw
+     * @param int|null $count A line number counter to use instead of the current count
+     * @param \Throwable|null $previous A previous exception to chain
+     * @throws ParserException
      */
-    public function throwError($msg = "parse error", $count = null)
+    public function throwError(string $msg = "parse error", ?int $count = null, \Throwable $previous = null)
     {
         $count = is_null($count) ? $this->count : $count;
 
-        $line = $this->line +
-            substr_count(substr($this->buffer, 0, $count), "\n");
+        $line = $this->line + substr_count(substr($this->buffer, 0, $count), "\n");
 
-        if (!empty($this->sourceName)) {
-            $loc = "$this->sourceName on line $line";
-        } else {
-            $loc = "line: $line";
-        }
-
-        // TODO this depends on $this->count
         if ($this->peek("(.*?)(\n|$)", $m, $count)) {
-            throw new Exception("$msg: failed at `$m[1]` $loc");
-        } else {
-            throw new Exception("$msg: $loc");
+            $culprit = $m[1];
         }
+
+        throw new ParserException(
+            $msg,
+            $culprit,
+            $this->sourceName,
+            $line,
+            $previous
+        );
     }
 
     protected function pushBlock($selectors = null, $type = null)

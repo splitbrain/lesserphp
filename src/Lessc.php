@@ -247,27 +247,27 @@ class Lessc
      */
     protected function compileBlock($block)
     {
-        switch ($block->type) {
-            case "root":
-                $this->compileRoot($block);
-                break;
-            case null:
-                $this->compileCSSBlock($block);
-                break;
-            case "media":
-                $this->compileMedia($block);
-                break;
-            case "directive":
-                $name = "@" . $block->name;
-                if (!empty($block->value)) {
-                    $name .= " " . $this->compileValue($this->reduce($block->value));
-                }
+            switch ($block->type) {
+                case "root":
+                    $this->compileRoot($block);
+                    break;
+                case null:
+                    $this->compileCSSBlock($block);
+                    break;
+                case "media":
+                    $this->compileMedia($block);
+                    break;
+                case "directive":
+                    $name = "@" . $block->name;
+                    if (!empty($block->value)) {
+                        $name .= " " . $this->compileValue($this->reduce($block->value));
+                    }
 
-                $this->compileNestedBlock($block, [$name]);
-                break;
-            default:
-                $block->parser->throwError("unknown block type: $block->type\n", $block->count);
-        }
+                    $this->compileNestedBlock($block, [$name]);
+                    break;
+                default:
+                    throw new Exception("unknown block type: $block->type\n");
+            }
     }
 
     /**
@@ -765,7 +765,7 @@ class Lessc
                     // has default value
                     $value = $a[2];
                 } else {
-                    $this->throwError("Failed to assign arg " . $a[1]);
+                    throw new Exception("Failed to assign arg " . $a[1]);
                 }
 
                 $value = $this->reduce($value);
@@ -833,7 +833,7 @@ class Lessc
                             $orderedArgs[] = $this->reduce($arg[1]);
                             break;
                         default:
-                            $this->throwError("Unknown arg type: " . $arg[0]);
+                            throw new Exception("Unknown arg type: " . $arg[0]);
                     }
                 }
 
@@ -1003,7 +1003,7 @@ class Lessc
                 [, $name, $args] = $value;
                 return $name . '(' . $this->compileValue($args) . ')';
             default: // assumed to be unit
-                $this->throwError("unknown value type: $value[0]");
+                throw new Exception("unknown value type: $value[0]");
         }
     }
 
@@ -1117,7 +1117,7 @@ class Lessc
                 $seen =& $this->env->seenNames;
 
                 if (!empty($seen[$key])) {
-                    $this->throwError("infinite loop detected: $key");
+                    throw new Exception("infinite loop detected: $key");
                 }
 
                 $seen[$key] = true;
@@ -1339,11 +1339,11 @@ class Lessc
                     $out[] = $lval % $rval;
                     break;
                 case '/':
-                    if ($rval == 0) $this->throwError("evaluate error: can't divide by zero");
+                    if ($rval == 0) throw new Exception("evaluate error: can't divide by zero");
                     $out[] = $lval / $rval;
                     break;
                 default:
-                    $this->throwError('evaluate error: color op number failed on op ' . $op);
+                    throw new Exception('evaluate error: color op number failed on op ' . $op);
             }
         }
         return Color::fixColor($out);
@@ -1373,7 +1373,7 @@ class Lessc
                 $value = $left[1] % $right[1];
                 break;
             case '/':
-                if ($right[1] == 0) $this->throwError('parse error: divide by zero');
+                if ($right[1] == 0) throw new Exception('parse error: divide by zero');
                 $value = $left[1] / $right[1];
                 break;
             case '<':
@@ -1385,7 +1385,7 @@ class Lessc
             case '=<':
                 return Util::toBool($left[1] <= $right[1]);
             default:
-                $this->throwError('parse error: unknown number operator: ' . $op);
+                throw new Exception('parse error: unknown number operator: ' . $op);
         }
 
         return ["number", $value, $unit];
@@ -1479,7 +1479,7 @@ class Lessc
             }
         }
 
-        $this->throwError("variable $name is undefined");
+        throw new Exception("variable $name is undefined");
     }
 
     /**
@@ -1524,7 +1524,13 @@ class Lessc
         }
 
         $this->sourceParser = $this->parser; // used for error messages
-        $this->compileBlock($root);
+
+        try {
+            $this->compileBlock($root);
+        } catch (Exception $e) {
+            $position = $this->sourceLoc !== -1 ? $this->sourceLoc : $root->count;
+            $this->sourceParser->throwError($e->getMessage(), $position, $e);
+        }
 
         ob_start();
         $this->formatter->block($this->scope);
@@ -1534,9 +1540,13 @@ class Lessc
     }
 
     /**
+     * Parse the given File and return the compiled CSS.
+     *
+     * If an output file is specified, the compiled CSS will be written to that file.
+     *
      * @throws Exception
      */
-    public function compileFile($fname, $outFname = null)
+    public function compileFile(string $fname, ?string $outFname = null)
     {
         if (!is_readable($fname)) {
             throw new Exception('load error: failed to find ' . $fname);
@@ -1778,18 +1788,6 @@ class Lessc
     public function addParsedFile($file)
     {
         $this->allParsedFiles[realpath($file)] = filemtime($file);
-    }
-
-    /**
-     * Uses the current value of $this->count to show line and line number
-     * @throws Exception
-     */
-    public function throwError($msg = null)
-    {
-        if ($this->sourceLoc >= 0) {
-            $this->sourceParser->throwError($msg, $this->sourceLoc);
-        }
-        throw new Exception($msg);
     }
 
     /**
