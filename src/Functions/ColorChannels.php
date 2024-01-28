@@ -125,7 +125,7 @@ class ColorChannels extends AbstractFunctionCollection
     public function luma(array $color): array
     {
         $color = Asserts::assertColor($color);
-        return ["number", round(Color::toLuma($color) * 100, 8), "%"];
+        return ['number', round(Color::toLuma($color) * 100, 8), '%'];
     }
 
     // luminance is missing

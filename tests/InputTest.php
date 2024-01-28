@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
 
 class InputTest extends TestCase
 {
-    const TESTDATA = __DIR__ . '/test-data';
+    public const TESTDATA = __DIR__ . '/test-data';
 
     /**
      * Provide the test data from all sets
@@ -21,7 +21,7 @@ class InputTest extends TestCase
             }
             $setName = basename($set);
 
-            if($setName == 'data') continue; // this is not a test set but additional import data
+            if ($setName == 'data') continue; // this is not a test set but additional import data
 
             $tests = glob($set . '/*.less');
             foreach ($tests as $testFile) {

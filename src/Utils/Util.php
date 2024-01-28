@@ -67,7 +67,7 @@ class Util
                 $result = $px * (1 / Constants::LENGTH_BASES[$to_index]);
 
                 $result = round($result, 8);
-                return ["number", $result, $to];
+                return ['number', $result, $to];
             }
         }
 
@@ -75,12 +75,12 @@ class Util
         if (in_array($from, Constants::TIME_UNITS)) {
             if (in_array($to, Constants::TIME_UNITS)) {
                 // currently only ms and s are valid
-                if ($to == "ms")
+                if ($to == 'ms')
                     $result = $value * 1000;
                 else $result = $value / 1000;
 
                 $result = round($result, 8);
-                return ["number", $result, $to];
+                return ['number', $result, $to];
             }
         }
 
@@ -88,13 +88,13 @@ class Util
         if (in_array($from, Constants::ANGLE_UNITS)) {
             // convert whatever angle it is into degrees
             switch ($from) {
-                case "rad":
+                case 'rad':
                     $deg = rad2deg($value);
                     break;
-                case "turn":
+                case 'turn':
                     $deg = $value * 360;
                     break;
-                case "grad":
+                case 'grad':
                     $deg = $value / (400 / 360);
                     break;
                 default:
@@ -104,13 +104,13 @@ class Util
 
             // Then convert it from degrees into desired unit
             switch ($to) {
-                case "rad":
+                case 'rad':
                     $result = deg2rad($deg);
                     break;
-                case "turn":
+                case 'turn':
                     $result = $deg / 360;
                     break;
-                case "grad":
+                case 'grad':
                     $result = $deg * (400 / 360);
                     break;
                 default:
@@ -119,7 +119,7 @@ class Util
             }
 
             $result = round($result, 8);
-            return ["number", $result, $to];
+            return ['number', $result, $to];
         }
 
         // we don't know how to convert these

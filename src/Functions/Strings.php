@@ -50,7 +50,7 @@ class Strings extends AbstractFunctionCollection
      */
     public function format(array $args) : array
     {
-        if ($args[0] != "list") return $args;
+        if ($args[0] != 'list') return $args;
         $values = $args[2];
         $string = array_shift($values);
         $template = $this->lessc->compileValue($this->lessc->unwrap($string));
@@ -77,8 +77,8 @@ class Strings extends AbstractFunctionCollection
             }
         }
 
-        $d = $string[0] == "string" ? $string[1] : '"';
-        return ["string", $d, [$template]];
+        $d = $string[0] == 'string' ? $string[1] : '"';
+        return ['string', $d, [$template]];
     }
 
     // replace is missing

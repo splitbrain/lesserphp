@@ -10,7 +10,7 @@ class ApiTest extends TestCase
     public function setUp(): void
     {
         $this->less = new Lessc();
-        $this->less->importDir = [__DIR__ . "/test-data/less/lesserphp/imports"];
+        $this->less->importDir = [__DIR__ . '/test-data/less/lesserphp/imports'];
     }
 
     public function testPreserveComments()
@@ -103,12 +103,12 @@ EOD;
     {
         $this->less->setVariables(
             [
-                "color" => "red",
-                "base" => "960px"
+                'color' => 'red',
+                'base' => '960px'
             ]
         );
 
-        $out = $this->less->compile(".magic { color: @color;  width: @base - 200; }");
+        $out = $this->less->compile('.magic { color: @color;  width: @base - 200; }');
 
         $this->assertEquals(
             trim("
@@ -119,28 +119,27 @@ EOD;
             "),
             trim($out)
         );
-
     }
 
     public function testDisableImport()
     {
         $this->less->importDisabled = true;
         $this->assertEquals(
-            "/* import disabled */",
+            '/* import disabled */',
             trim($this->less->compile("@import 'file3';"))
         );
     }
 
     public function testUserFunction()
     {
-        $this->less->registerFunction("add-two", function ($list) {
-            list($a, $b) = $list[2];
+        $this->less->registerFunction('add-two', function ($list) {
+            [$a, $b] = $list[2];
             return $a[1] + $b[1];
         });
 
         $this->assertEquals(
-            "result: 30;",
-            trim($this->less->compile("result: add-two(10, 20);"))
+            'result: 30;',
+            trim($this->less->compile('result: add-two(10, 20);'))
         );
 
         return $this->less;
@@ -151,11 +150,11 @@ EOD;
      */
     public function testUnregisterFunction($less)
     {
-        $less->unregisterFunction("add-two");
+        $less->unregisterFunction('add-two');
 
         $this->assertEquals(
-            "result: add-two(10,20);",
-            trim($this->less->compile("result: add-two(10, 20);"))
+            'result: add-two(10,20);',
+            trim($this->less->compile('result: add-two(10, 20);'))
         );
     }
 
@@ -171,7 +170,7 @@ EOD;
                 }
             }";
 
-        $this->less->setFormatter("compressed");
+        $this->less->setFormatter('compressed');
         $this->assertEquals(
             trim("
 div,pre{color:blue;}div span,div .big,div hello.world,pre span,pre .big,pre hello.world{height:20px;color:#fff;}
@@ -180,7 +179,7 @@ div,pre{color:blue;}div span,div .big,div hello.world,pre span,pre .big,pre hell
         );
 
         // TODO: fix the output order of tags
-        $this->less->setFormatter("lessjs");
+        $this->less->setFormatter('lessjs');
         $this->assertEquals(
             trim("
 div,
@@ -200,7 +199,7 @@ pre hello.world {
             trim($this->less->compile($src))
         );
 
-        $this->less->setFormatter("classic");
+        $this->less->setFormatter('classic');
         $this->assertEquals(
             trim("
 div, pre { color:blue; }
@@ -212,6 +211,4 @@ div span, div .big, div hello.world, pre span, pre .big, pre hello.world {
             trim($this->less->compile($src))
         );
     }
-
-
 }

@@ -43,10 +43,10 @@ class Misc extends AbstractFunctionCollection
      */
     public function convert(array $args): array
     {
-        [$value, $to] = Asserts::assertArgs($args, 2, "convert");
+        [$value, $to] = Asserts::assertArgs($args, 2, 'convert');
 
         // If it's a keyword, grab the string version instead
-        if (is_array($to) && $to[0] == "keyword") {
+        if (is_array($to) && $to[0] == 'keyword') {
             $to = $to[1];
         }
 
@@ -98,15 +98,15 @@ class Misc extends AbstractFunctionCollection
      */
     public function unit(array $arg): array
     {
-        if ($arg[0] == "list") {
+        if ($arg[0] == 'list') {
             [$number, $newUnit] = $arg[2];
             return [
-                "number",
+                'number',
                 Asserts::assertNumber($number),
                 $this->lessc->compileValue($this->lessc->unwrap($newUnit))
             ];
         } else {
-            return ["number", Asserts::assertNumber($arg), ""];
+            return ['number', Asserts::assertNumber($arg), ''];
         }
     }
 

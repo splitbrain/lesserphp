@@ -163,8 +163,8 @@ class ColorOperation extends ColorChannels
      */
     public function mix(array $args): array
     {
-        if ($args[0] != "list" || count($args[2]) < 2) {
-            throw new Exception("mix expects (color1, color2, weight)");
+        if ($args[0] != 'list' || count($args[2]) < 2) {
+            throw new Exception('mix expects (color1, color2, weight)');
         }
 
         [$first, $second] = $args[2];
@@ -216,10 +216,10 @@ class ColorOperation extends ColorChannels
         $white = ['color', 255, 255, 255];
         if ($args[0] == 'color') {
             return $this->mix(['list', ',', [$white, $args]]);
-        } elseif ($args[0] == "list" && count($args[2]) == 2) {
+        } elseif ($args[0] == 'list' && count($args[2]) == 2) {
             return $this->mix([$args[0], $args[1], [$white, $args[2][0], $args[2][1]]]);
         } else {
-            throw new Exception("tint expects (color, weight)");
+            throw new Exception('tint expects (color, weight)');
         }
     }
 
@@ -239,10 +239,10 @@ class ColorOperation extends ColorChannels
         $black = ['color', 0, 0, 0];
         if ($args[0] == 'color') {
             return $this->mix(['list', ',', [$black, $args]]);
-        } elseif ($args[0] == "list" && count($args[2]) == 2) {
+        } elseif ($args[0] == 'list' && count($args[2]) == 2) {
             return $this->mix([$args[0], $args[1], [$black, $args[2][0], $args[2][1]]]);
         } else {
-            throw new Exception("shade expects (color, weight)");
+            throw new Exception('shade expects (color, weight)');
         }
     }
 

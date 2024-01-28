@@ -94,7 +94,7 @@ class Lessc
     public function compile(string $string, ?string $name = null): string
     {
         $locale = setlocale(LC_NUMERIC, 0);
-        setlocale(LC_NUMERIC, "C");
+        setlocale(LC_NUMERIC, 'C');
 
         $this->parser = $this->makeParser($name);
         $root = $this->parser->parse($string);
@@ -317,7 +317,7 @@ class Lessc
      */
     protected function tryImport($importPath, $parentBlock, $out)
     {
-        if ($importPath[0] == "function" && $importPath[1] == "url") {
+        if ($importPath[0] == 'function' && $importPath[1] == 'url') {
             $importPath = $this->flattenList($importPath[2]);
         }
 
@@ -334,7 +334,7 @@ class Lessc
         if ($realPath === null) return false;
 
         if ($this->importDisabled) {
-            return [false, "/* import disabled */"];
+            return [false, '/* import disabled */'];
         }
 
         if (isset($this->allParsedFiles[realpath($realPath)])) {
@@ -347,7 +347,7 @@ class Lessc
 
         // set the parents of all the block props
         foreach ($root->props as $prop) {
-            if ($prop[0] == "block") {
+            if ($prop[0] == 'block') {
                 $prop[1]->parent = $parentBlock;
             }
         }
@@ -367,7 +367,7 @@ class Lessc
         }
 
         $pi = pathinfo($realPath);
-        $dir = $pi["dirname"];
+        $dir = $pi['dirname'];
 
         [$top, $bottom] = $this->sortProps($root->props, true);
         $this->compileImportedProps($top, $parentBlock, $out, $parser, $dir);
@@ -420,19 +420,19 @@ class Lessc
     protected function compileBlock($block)
     {
         switch ($block->type) {
-            case "root":
+            case 'root':
                 $this->compileRoot($block);
                 break;
             case null:
                 $this->compileCSSBlock($block);
                 break;
-            case "media":
+            case 'media':
                 $this->compileMedia($block);
                 break;
-            case "directive":
-                $name = "@" . $block->name;
+            case 'directive':
+                $name = '@' . $block->name;
                 if (!empty($block->value)) {
-                    $name .= " " . $this->compileValue($this->reduce($block->value));
+                    $name .= ' ' . $this->compileValue($this->reduce($block->value));
                 }
 
                 $this->compileNestedBlock($block, [$name]);
@@ -492,7 +492,7 @@ class Lessc
     protected function mediaParent($scope)
     {
         while (!empty($scope->parent)) {
-            if (!empty($scope->type) && $scope->type != "media") {
+            if (!empty($scope->type) && $scope->type != 'media') {
                 break;
             }
             $scope = $scope->parent;
@@ -571,10 +571,10 @@ class Lessc
 
         foreach ($props as $prop) {
             switch ($prop[0]) {
-                case "comment":
+                case 'comment':
                     $stack[] = $prop;
                     break;
-                case "assign":
+                case 'assign':
                     $stack[] = $prop;
                     if (isset($prop[1][0]) && $prop[1][0] == $this->vPrefix) {
                         $vars = array_merge($vars, $stack);
@@ -583,12 +583,12 @@ class Lessc
                     }
                     $stack = [];
                     break;
-                case "import":
+                case 'import':
                     $id = self::$nextImportId++;
                     $prop[] = $id;
                     $stack[] = $prop;
                     $imports = array_merge($imports, $stack);
-                    $other[] = ["import_mixin", $id];
+                    $other[] = ['import_mixin', $id];
                     $stack = [];
                     break;
                 default:
@@ -617,31 +617,31 @@ class Lessc
             $parts = [];
             foreach ($query as $q) {
                 switch ($q[0]) {
-                    case "mediaType":
-                        $parts[] = implode(" ", array_slice($q, 1));
+                    case 'mediaType':
+                        $parts[] = implode(' ', array_slice($q, 1));
                         break;
-                    case "mediaExp":
+                    case 'mediaExp':
                         if (isset($q[2])) {
                             $parts[] = "($q[1]: " .
-                                $this->compileValue($this->reduce($q[2])) . ")";
+                                $this->compileValue($this->reduce($q[2])) . ')';
                         } else {
                             $parts[] = "($q[1])";
                         }
                         break;
-                    case "variable":
+                    case 'variable':
                         $parts[] = $this->compileValue($this->reduce($q));
                         break;
                 }
             }
 
             if (count($parts) > 0) {
-                $compiledQueries[] = implode(" and ", $parts);
+                $compiledQueries[] = implode(' and ', $parts);
             }
         }
 
-        $out = "@media";
+        $out = '@media';
         if (!empty($parts)) {
-            $out .= " " .
+            $out .= ' ' .
                 implode($this->formatter->selectorSeparator, $compiledQueries);
         }
         return $out;
@@ -650,7 +650,7 @@ class Lessc
     protected function multiplyMedia($env, $childQueries = null)
     {
         if (is_null($env) ||
-            !empty($env->block->type) && $env->block->type != "media") {
+            !empty($env->block->type) && $env->block->type != 'media') {
             return $childQueries;
         }
 
@@ -711,7 +711,7 @@ class Lessc
         if (is_null($parentSelectors)) {
             // kill parent reference in top level selector
             foreach ($selectors as &$s) {
-                $this->expandParentSelectors($s, "");
+                $this->expandParentSelectors($s, '');
             }
 
             return $selectors;
@@ -775,7 +775,7 @@ class Lessc
                     $this->zipSetArgs($block->args, $orderedArgs, $keywordArgs);
 
                     $negate = false;
-                    if ($guard[0] == "negate") {
+                    if ($guard[0] == 'negate') {
                         $guard = $guard[1];
                         $negate = true;
                     }
@@ -809,7 +809,7 @@ class Lessc
         if ($keywordArgs) {
             $remainingArgs = [];
             foreach ($block->args as $arg) {
-                if ($arg[0] == "arg" && isset($keywordArgs[$arg[1]])) {
+                if ($arg[0] == 'arg' && isset($keywordArgs[$arg[1]])) {
                     continue;
                 }
 
@@ -821,18 +821,18 @@ class Lessc
         // try to match by arity or by argument literal
         foreach ($remainingArgs as $i => $arg) {
             switch ($arg[0]) {
-                case "lit":
+                case 'lit':
                     if (empty($orderedArgs[$i]) || !$this->eq($arg[1], $orderedArgs[$i])) {
                         return false;
                     }
                     break;
-                case "arg":
+                case 'arg':
                     // no arg and no default value
                     if (!isset($orderedArgs[$i]) && !isset($arg[2])) {
                         return false;
                     }
                     break;
-                case "rest":
+                case 'rest':
                     $i--; // rest can be empty
                     break 2;
             }
@@ -925,7 +925,7 @@ class Lessc
 
         $i = 0;
         foreach ($args as $a) {
-            if ($a[0] == "arg") {
+            if ($a[0] == 'arg') {
                 if (isset($keywordValues[$a[1]])) {
                     // has keyword arg
                     $value = $keywordValues[$a[1]];
@@ -937,7 +937,7 @@ class Lessc
                     // has default value
                     $value = $a[2];
                 } else {
-                    throw new Exception("Failed to assign arg " . $a[1]);
+                    throw new Exception('Failed to assign arg ' . $a[1]);
                 }
 
                 $value = $this->reduce($value);
@@ -951,9 +951,9 @@ class Lessc
 
         // check for a rest
         $last = end($args);
-        if ($last !== false && $last[0] === "rest") {
+        if ($last !== false && $last[0] === 'rest') {
             $rest = array_slice($orderedValues, count($args) - 1);
-            $this->set($last[1], $this->reduce(["list", " ", $rest]));
+            $this->set($last[1], $this->reduce(['list', ' ', $rest]));
         }
 
         // wow is this the only true use of PHP's + operator for arrays?
@@ -993,19 +993,19 @@ class Lessc
                 $keywordArgs = [];
                 foreach ((array)$args as $arg) {
                     switch ($arg[0]) {
-                        case "arg":
+                        case 'arg':
                             if (!isset($arg[2])) {
-                                $orderedArgs[] = $this->reduce(["variable", $arg[1]]);
+                                $orderedArgs[] = $this->reduce(['variable', $arg[1]]);
                             } else {
                                 $keywordArgs[$arg[1]] = $this->reduce($arg[2]);
                             }
                             break;
 
-                        case "lit":
+                        case 'lit':
                             $orderedArgs[] = $this->reduce($arg[1]);
                             break;
                         default:
-                            throw new Exception("Unknown arg type: " . $arg[0]);
+                            throw new Exception('Unknown arg type: ' . $arg[0]);
                     }
                 }
 
@@ -1044,7 +1044,7 @@ class Lessc
 
                     foreach ($this->sortProps($mixin->props) as $subProp) {
                         if ($suffix !== null &&
-                            $subProp[0] == "assign" &&
+                            $subProp[0] == 'assign' &&
                             is_string($subProp[1]) &&
                             $subProp[1][0] != $this->vPrefix) {
                             $subProp[2] = ['list', ' ', [$subProp[2], ['keyword', $suffix]]];
@@ -1061,14 +1061,14 @@ class Lessc
 
                 break;
             case 'raw':
-            case "comment":
+            case 'comment':
                 $out->lines[] = $prop[1];
                 break;
-            case "directive":
+            case 'directive':
                 [, $name, $value] = $prop;
                 $out->lines[] = "@$name " . $this->compileValue($this->reduce($value)) . ';';
                 break;
-            case "import":
+            case 'import':
                 [, $importPath, $importId] = $prop;
                 $importPath = $this->reduce($importPath);
 
@@ -1079,11 +1079,11 @@ class Lessc
                 $result = $this->tryImport($importPath, $block, $out);
 
                 $this->env->imports[$importId] = $result === false ?
-                    [false, "@import " . $this->compileValue($importPath) . ";"] :
+                    [false, '@import ' . $this->compileValue($importPath) . ';'] :
                     $result;
 
                 break;
-            case "import_mixin":
+            case 'import_mixin':
                 [, $importId] = $prop;
                 $import = $this->env->imports[$importId];
                 if ($import[0] === false) {
@@ -1160,7 +1160,7 @@ class Lessc
                     return 'rgba(' . $r . ',' . $g . ',' . $b . ',' . $value[4] . ')';
                 }
 
-                $h = sprintf("#%02x%02x%02x", $r, $g, $b);
+                $h = sprintf('#%02x%02x%02x', $r, $g, $b);
 
                 if (!empty($this->formatter->compressColors)) {
                     // Converting hex color to short notation (e.g. #003399 to #039)
@@ -1187,19 +1187,19 @@ class Lessc
     public function unwrap(array $arg): array
     {
         switch ($arg[0]) {
-            case "list":
+            case 'list':
                 $items = $arg[2];
                 if (isset($items[0])) {
                     return self::unwrap($items[0]);
                 }
-                throw new Exception("unrecognised input");
-            case "string":
-                $arg[1] = "";
+                throw new Exception('unrecognised input');
+            case 'string':
+                $arg[1] = '';
                 return $arg;
-            case "keyword":
+            case 'keyword':
                 return $arg;
             default:
-                return ["keyword", $this->compileValue($arg)];
+                return ['keyword', $this->compileValue($arg)];
         }
     }
 
@@ -1238,13 +1238,13 @@ class Lessc
             foreach ($rawComponents as $c) {
                 $c = $this->reduce($c);
                 if ($i < 4) {
-                    if ($c[0] == "number" && $c[2] == "%") {
+                    if ($c[0] == 'number' && $c[2] == '%') {
                         $components[] = 255 * ($c[1] / 100);
                     } else {
                         $components[] = floatval($c[1]);
                     }
                 } elseif ($i == 4) {
-                    if ($c[0] == "number" && $c[2] == "%") {
+                    if ($c[0] == 'number' && $c[2] == '%') {
                         $components[] = 1.0 * ($c[1] / 100);
                     } else {
                         $components[] = floatval($c[1]);
@@ -1267,19 +1267,19 @@ class Lessc
     public function reduce($value, $forExpression = false)
     {
         switch ($value[0]) {
-            case "interpolate":
+            case 'interpolate':
                 $reduced = $this->reduce($value[1]);
                 $var = $this->compileValue($reduced);
-                $res = $this->reduce(["variable", $this->vPrefix . $var]);
+                $res = $this->reduce(['variable', $this->vPrefix . $var]);
 
-                if ($res[0] == "raw_color") {
+                if ($res[0] == 'raw_color') {
                     $res = Color::coerceColor($res);
                 }
 
                 if (empty($value[2])) $res = $this->unwrap($res);
 
                 return $res;
-            case "variable":
+            case 'variable':
                 $key = $value[1];
                 if (is_array($key)) {
                     $key = $this->reduce($key);
@@ -1296,26 +1296,26 @@ class Lessc
                 $out = $this->reduce($this->get($key));
                 $seen[$key] = false;
                 return $out;
-            case "list":
+            case 'list':
                 foreach ($value[2] as &$item) {
                     $item = $this->reduce($item, $forExpression);
                 }
                 return $value;
-            case "expression":
+            case 'expression':
                 return $this->evaluate($value);
-            case "string":
+            case 'string':
                 foreach ($value[2] as &$part) {
                     if (is_array($part)) {
-                        $strip = $part[0] == "variable";
+                        $strip = $part[0] == 'variable';
                         $part = $this->reduce($part);
                         if ($strip) $part = $this->unwrap($part);
                     }
                 }
                 return $value;
-            case "escape":
+            case 'escape':
                 [, $inner] = $value;
                 return $this->unwrap($this->reduce($inner));
-            case "function":
+            case 'function':
                 $color = $this->funcToColor($value);
                 if ($color) return $color;
 
@@ -1330,11 +1330,11 @@ class Lessc
                     $ret = call_user_func($f, $this->reduce($args, true), $this);
 
                     if (is_null($ret)) {
-                        return ["string", "", [$name, "(", $args, ")"]];
+                        return ['string', '', [$name, '(', $args, ')']];
                     }
 
                     // convert to a typed value if the result is a php primitive
-                    if (is_numeric($ret)) $ret = ['number', $ret, ""];
+                    if (is_numeric($ret)) $ret = ['number', $ret, ''];
                     elseif (!is_array($ret)) $ret = ['keyword', $ret];
 
                     return $ret;
@@ -1343,30 +1343,30 @@ class Lessc
                 // plain function, reduce args
                 $value[2] = $this->reduce($value[2]);
                 return $value;
-            case "unary":
+            case 'unary':
                 [, $op, $exp] = $value;
                 $exp = $this->reduce($exp);
 
-                if ($exp[0] == "number") {
+                if ($exp[0] == 'number') {
                     switch ($op) {
-                        case "+":
+                        case '+':
                             return $exp;
-                        case "-":
+                        case '-':
                             $exp[1] *= -1;
                             return $exp;
                     }
                 }
-                return ["string", "", [$op, $exp]];
+                return ['string', '', [$op, $exp]];
         }
 
         if ($forExpression) {
             switch ($value[0]) {
-                case "keyword":
+                case 'keyword':
                     if ($color = Color::coerceColor($value)) {
                         return $color;
                     }
                     break;
-                case "raw_color":
+                case 'raw_color':
                     return Color::coerceColor($value);
             }
         }
@@ -1379,10 +1379,10 @@ class Lessc
     protected function coerceString($value)
     {
         switch ($value[0]) {
-            case "string":
+            case 'string':
                 return $value;
-            case "keyword":
-                return ["string", "", [$value[1]]];
+            case 'keyword':
+                return ['string', '', [$value[1]]];
         }
         return null;
     }
@@ -1390,7 +1390,7 @@ class Lessc
     // turn list of length 1 into value type
     protected function flattenList($value)
     {
-        if ($value[0] == "list" && count($value[2]) == 1) {
+        if ($value[0] == 'list' && count($value[2]) == 1) {
             return $this->flattenList($value[2][0]);
         }
         return $value;
@@ -1419,15 +1419,15 @@ class Lessc
         $rtype = $right[0];
 
         // operators that work on all types
-        if ($op == "and") {
+        if ($op == 'and') {
             return Util::toBool($left == Constants::TRUE && $right == Constants::TRUE);
         }
 
-        if ($op == "=") {
+        if ($op == '=') {
             return Util::toBool($this->eq($left, $right));
         }
 
-        if ($op == "+" && !is_null($str = $this->stringConcatenate($left, $right))) {
+        if ($op == '+' && !is_null($str = $this->stringConcatenate($left, $right))) {
             return $str;
         }
 
@@ -1440,17 +1440,17 @@ class Lessc
 
         // make the expression look it did before being parsed
         $paddedOp = $op;
-        if ($whiteBefore) $paddedOp = " " . $paddedOp;
-        if ($whiteAfter) $paddedOp .= " ";
+        if ($whiteBefore) $paddedOp = ' ' . $paddedOp;
+        if ($whiteAfter) $paddedOp .= ' ';
 
-        return ["string", "", [$left, $paddedOp, $right]];
+        return ['string', '', [$left, $paddedOp, $right]];
     }
 
     protected function stringConcatenate($left, $right)
     {
         if ($strLeft = $this->coerceString($left)) {
-            if ($right[0] == "string") {
-                $right[1] = "";
+            if ($right[0] == 'string') {
+                $right[1] = '';
             }
             $strLeft[2][] = $right;
             return $strLeft;
@@ -1560,7 +1560,7 @@ class Lessc
                 throw new Exception('parse error: unknown number operator: ' . $op);
         }
 
-        return ["number", $value, $unit];
+        return ['number', $value, $unit];
     }
 
 

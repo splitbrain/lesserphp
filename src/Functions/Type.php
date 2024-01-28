@@ -39,7 +39,7 @@ class Type extends AbstractFunctionCollection
      */
     public function isnumber(array $value): array
     {
-        return Util::toBool($value[0] == "number");
+        return Util::toBool($value[0] == 'number');
     }
 
     /**
@@ -49,7 +49,7 @@ class Type extends AbstractFunctionCollection
      */
     public function isstring(array $value): array
     {
-        return Util::toBool($value[0] == "string");
+        return Util::toBool($value[0] == 'string');
     }
 
     /**
@@ -69,7 +69,7 @@ class Type extends AbstractFunctionCollection
      */
     public function iskeyword(array $value): array
     {
-        return Util::toBool($value[0] == "keyword");
+        return Util::toBool($value[0] == 'keyword');
     }
 
     // isurl is missing
@@ -81,7 +81,7 @@ class Type extends AbstractFunctionCollection
      */
     public function ispixel(array $value): array
     {
-        return Util::toBool($value[0] == "number" && $value[2] == "px");
+        return Util::toBool($value[0] == 'number' && $value[2] == 'px');
     }
 
     /**
@@ -91,7 +91,7 @@ class Type extends AbstractFunctionCollection
      */
     public function isem(array $value): array
     {
-        return Util::toBool($value[0] == "number" && $value[2] == "em");
+        return Util::toBool($value[0] == 'number' && $value[2] == 'em');
     }
 
     /**
@@ -101,7 +101,7 @@ class Type extends AbstractFunctionCollection
      */
     public function isrem(array $value): array
     {
-        return Util::toBool($value[0] == "number" && $value[2] == "rem");
+        return Util::toBool($value[0] == 'number' && $value[2] == 'rem');
     }
 
     /**
@@ -111,7 +111,7 @@ class Type extends AbstractFunctionCollection
      */
     public function ispercentage(array $value): array
     {
-        return Util::toBool($value[0] == "number" && $value[2] == "%");
+        return Util::toBool($value[0] == 'number' && $value[2] == '%');
     }
 
     // isunit is missing

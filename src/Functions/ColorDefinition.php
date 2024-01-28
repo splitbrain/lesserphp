@@ -42,7 +42,7 @@ class ColorDefinition extends AbstractFunctionCollection
         $color = Asserts::assertColor($color);
 
         return sprintf(
-            "#%02x%02x%02x%02x",
+            '#%02x%02x%02x%02x',
             isset($color[4]) ? $color[4] * 255 : 255,
             $color[1],
             $color[2],

@@ -4,20 +4,20 @@ namespace LesserPHP;
 
 class Constants
 {
-    public const TRUE = ["keyword", "true"];
-    public const FALSE = ["keyword", "false"];
+    public const TRUE = ['keyword', 'true'];
+    public const FALSE = ['keyword', 'false'];
 
     /** @var string Convertable lenght units */
-    public const LENGTH_UNITS = ["px", "m", "cm", "mm", "in", "pt", "pc"];
+    public const LENGTH_UNITS = ['px', 'm', 'cm', 'mm', 'in', 'pt', 'pc'];
 
     /** @var float[] Above length units converted to pixel */
     public const LENGTH_BASES = [1, 3779.52755906, 37.79527559, 3.77952756, 96, 1.33333333, 16];
 
     /** @var string time units */
-    public const TIME_UNITS = ["s", "ms"];
+    public const TIME_UNITS = ['s', 'ms'];
 
     /** @var string angle units */
-    public const ANGLE_UNITS = ["rad", "deg", "grad", "turn"];
+    public const ANGLE_UNITS = ['rad', 'deg', 'grad', 'turn'];
 
     /** @var array Named CSS colors ["name" => "r,g,b"] */
     public const CSS_COLORS = [

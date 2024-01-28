@@ -34,10 +34,10 @@ class Lists extends AbstractFunctionCollection
      */
     public function extract(array $value)
     {
-        [$list, $idx] = Asserts::assertArgs($value, 2, "extract");
+        [$list, $idx] = Asserts::assertArgs($value, 2, 'extract');
         $idx = Asserts::assertNumber($idx);
         // 1 indexed
-        if ($list[0] == "list" && isset($list[2][$idx - 1])) {
+        if ($list[0] == 'list' && isset($list[2][$idx - 1])) {
             return $list[2][$idx - 1];
         }
 

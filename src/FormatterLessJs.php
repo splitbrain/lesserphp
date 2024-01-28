@@ -16,6 +16,6 @@ class FormatterLessJs extends FormatterClassic
 {
     public $disableSingle = true;
     public $breakSelectors = true;
-    public $assignSeparator = ": ";
-    public $selectorSeparator = ",";
+    public $assignSeparator = ': ';
+    public $selectorSeparator = ',';
 }

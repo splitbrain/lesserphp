@@ -17,8 +17,8 @@ class ParserException extends \Exception
         ?string    $culprit = '',
         ?string    $sourceFile = '',
         ?int       $sourceLine = -1,
-        \Throwable $previous = null)
-    {
+        \Throwable $previous = null
+    ) {
         $this->error = $message;
 
         if ($culprit) {
@@ -75,4 +75,3 @@ class ParserException extends \Exception
         return $this->sourceLine;
     }
 }
-

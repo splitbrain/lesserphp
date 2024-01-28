@@ -19,7 +19,7 @@ class Color
             case 'color':
                 return $value;
             case 'raw_color':
-                $c = ["color", 0, 0, 0];
+                $c = ['color', 0, 0, 0];
                 $colorStr = substr($value[1], 1);
                 $num = hexdec($colorStr);
                 $width = strlen($colorStr) == 3 ? 16 : 256;

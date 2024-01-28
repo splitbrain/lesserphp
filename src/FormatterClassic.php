@@ -14,16 +14,16 @@ namespace LesserPHP;
 
 class FormatterClassic
 {
-    public $indentChar = "  ";
+    public $indentChar = '  ';
 
     public $break = "\n";
-    public $open = " {";
-    public $close = "}";
-    public $selectorSeparator = ", ";
-    public $assignSeparator = ":";
+    public $open = ' {';
+    public $close = '}';
+    public $selectorSeparator = ', ';
+    public $assignSeparator = ':';
 
-    public $openSingle = " { ";
-    public $closeSingle = " }";
+    public $openSingle = ' { ';
+    public $closeSingle = ' }';
 
     public $disableSingle = false;
     public $breakSelectors = false;
@@ -43,7 +43,7 @@ class FormatterClassic
 
     public function property($name, $value)
     {
-        return $name . $this->assignSeparator . $value . ";";
+        return $name . $this->assignSeparator . $value . ';';
     }
 
     protected function isEmpty($block)
@@ -80,7 +80,7 @@ class FormatterClassic
                 implode($selectorSeparator, $block->selectors);
             if ($isSingle) {
                 echo $this->openSingle;
-                $inner = "";
+                $inner = '';
             } else {
                 echo $this->open . $this->break;
                 $inner = $this->indentStr();

@@ -48,7 +48,7 @@ class Math extends AbstractFunctionCollection
     public function ceil(array $arg): array
     {
         $value = Asserts::assertNumber($arg);
-        return ["number", ceil($value), $arg[2]];
+        return ['number', ceil($value), $arg[2]];
     }
 
     /**
@@ -60,7 +60,7 @@ class Math extends AbstractFunctionCollection
     public function floor(array $arg): array
     {
         $value = Asserts::assertNumber($arg);
-        return ["number", floor($value), $arg[2]];
+        return ['number', floor($value), $arg[2]];
     }
 
     /**
@@ -72,7 +72,7 @@ class Math extends AbstractFunctionCollection
     public function percentage(array $arg): array
     {
         $num = Asserts::assertNumber($arg);
-        return ["number", $num * 100, "%"];
+        return ['number', $num * 100, '%'];
     }
 
     /**
@@ -83,13 +83,13 @@ class Math extends AbstractFunctionCollection
      */
     public function round(array $arg): array
     {
-        if ($arg[0] != "list") {
+        if ($arg[0] != 'list') {
             $value = Asserts::assertNumber($arg);
-            return ["number", round($value), $arg[2]];
+            return ['number', round($value), $arg[2]];
         } else {
             $value = Asserts::assertNumber($arg[2][0]);
             $precision = Asserts::assertNumber($arg[2][1]);
-            return ["number", round($value, $precision), $arg[2][0][2]];
+            return ['number', round($value, $precision), $arg[2][0][2]];
         }
     }
 
@@ -112,7 +112,7 @@ class Math extends AbstractFunctionCollection
      */
     public function abs(array $num): array
     {
-        return ["number", abs(Asserts::assertNumber($num)), $num[2]];
+        return ['number', abs(Asserts::assertNumber($num)), $num[2]];
     }
 
     /**
@@ -135,7 +135,7 @@ class Math extends AbstractFunctionCollection
     public function asin(array $num): array
     {
         $num = asin(Asserts::assertNumber($num));
-        return ["number", $num, "rad"];
+        return ['number', $num, 'rad'];
     }
 
     /**
@@ -158,7 +158,7 @@ class Math extends AbstractFunctionCollection
     public function acos(array $num): array
     {
         $num = acos(Asserts::assertNumber($num));
-        return ["number", $num, "rad"];
+        return ['number', $num, 'rad'];
     }
 
     /**
@@ -181,7 +181,7 @@ class Math extends AbstractFunctionCollection
     public function atan(array $num): array
     {
         $num = atan(Asserts::assertNumber($num));
-        return ["number", $num, "rad"];
+        return ['number', $num, 'rad'];
     }
 
     /**
@@ -202,8 +202,8 @@ class Math extends AbstractFunctionCollection
      */
     public function pow(array $args): array
     {
-        [$base, $exp] = Asserts::assertArgs($args, 2, "pow");
-        return ["number", Asserts::assertNumber($base) ** Asserts::assertNumber($exp), $args[2][0][2]];
+        [$base, $exp] = Asserts::assertArgs($args, 2, 'pow');
+        return ['number', Asserts::assertNumber($base) ** Asserts::assertNumber($exp), $args[2][0][2]];
     }
 
     /**
@@ -214,8 +214,8 @@ class Math extends AbstractFunctionCollection
      */
     public function mod(array $args): array
     {
-        [$a, $b] = Asserts::assertArgs($args, 2, "mod");
-        return ["number", Asserts::assertNumber($a) % Asserts::assertNumber($b), $args[2][0][2]];
+        [$a, $b] = Asserts::assertArgs($args, 2, 'mod');
+        return ['number', Asserts::assertNumber($a) % Asserts::assertNumber($b), $args[2][0][2]];
     }
 
     /**
@@ -226,7 +226,7 @@ class Math extends AbstractFunctionCollection
      */
     public function min(array $args): array
     {
-        $values = Asserts::assertMinArgs($args, 1, "min");
+        $values = Asserts::assertMinArgs($args, 1, 'min');
 
         $first_format = $values[0][2];
 
@@ -253,7 +253,7 @@ class Math extends AbstractFunctionCollection
      */
     public function max(array $args): array
     {
-        $values = Asserts::assertMinArgs($args, 1, "max");
+        $values = Asserts::assertMinArgs($args, 1, 'max');
 
         $first_format = $values[0][2];
 
