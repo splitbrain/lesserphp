@@ -1,0 +1,2 @@
+less.js encodes SVGs as plain text data-uris, LesserPHP always uses base64 encoding.
+The test result has been modified to reflect this change.
