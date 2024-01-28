@@ -114,6 +114,7 @@ class Lessc
         try {
             $this->compileBlock($root);
         } catch (Exception $e) {
+            setlocale(LC_NUMERIC, $locale);
             $position = $this->sourceLoc !== -1 ? $this->sourceLoc : $root->count;
             $this->sourceParser->throwError($e->getMessage(), $position, $e);
         }
