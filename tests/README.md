@@ -1,24 +1,26 @@
-lessphp uses [phpunit](https://github.com/sebastianbergmann/phpunit/) for its tests
+# LesserPHP Test Suite
 
-* `InputTest.php` iterates through all the less files in `inputs/`, compiles
-  them, then compares the result with the respective file in `outputs/`.
+LesserPHP uses [phpunit](https://github.com/sebastianbergmann/phpunit/) for its tests
 
-* `ApiTest.php` tests the behavior of lessphp's public API methods.
+## InputTest.php
 
-* `ErrorHandlingTest.php` tests that lessphp throws appropriate errors when
-  given invalid LESS as input.
+This iterates through all the `.less` files in `test-data/less/*/*.less`, compiles them and compares the result with the respective file in `test-data/css/*/*.css`.
 
-From the root you can run `make` to run all the tests.
+Most of the tests are taken from the [less.js](https://github.com/less/less.js/tree/master/packages/test-data) test suite as of January 2024 (release 4.2.0+). They are thus licensed under the [Apache License 2.0](https://github.com/less/less.js/blob/master/LICENSE).
 
-## lessjs tests
+The exception are all files unter `test-data/lesserphp/` which have been written for LessPHP and LesserPHP in the past and thus fall under same license as lesserphp itself.
 
-Tests found in `inputs_lessjs` are extracted directly from
-[less.js](https://github.com/less/less.js). The following license applies to
-those tests: https://github.com/less/less.js/blob/master/LICENSE
+**LesserPHP is not able to pass all upstream tests!** 
 
-## bootstrap.sh
+Input files ending in `.skip.less` are marked as a skipped test. These tests still need to be manually checked and either be adjusted to the capabilities of LesserPHP or LesserPHP needs to be improved to pass the test. 
 
-Clones twitter bootsrap, compiles it with lessc and lessphp, cleans up results
-with sort.php, and outputs diff. To run it, you need to have git and lessc
-installed.
+Files and directories ending in `.isabled` are completely ignored. These tests are probably not applicable to LesserPHP or need major changes.
+
+## ApiTest.php
+
+Tests the behavior of LesserPHP's public API methods.
+
+## ErrorHandlingTest.php
+
+Tests that lessphp throws appropriate errors when given invalid LESS as input.
 

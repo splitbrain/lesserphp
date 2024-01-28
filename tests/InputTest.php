@@ -5,87 +5,64 @@ namespace LesserPHP\tests;
 use LesserPHP\Lessc;
 use PHPUnit\Framework\TestCase;
 
-// Runs all the tests in inputs/ and compares their output to ouputs/
+class InputTest extends TestCase
+{
+    const TESTDATA = __DIR__ . '/test-data';
 
-function _dump($value) {
-    fwrite(STDOUT, print_r($value, true));
-}
+    /**
+     * Provide the test data from all sets
+     */
+    public function provideTestData()
+    {
+        $sets = glob(self::TESTDATA . '/less/*', GLOB_ONLYDIR);
+        foreach ($sets as $set) {
+            if (preg_match('/\.disabled$/', $set)) {
+                continue; // skip disabled sets
+            }
+            $setName = basename($set);
 
-function _quote($str) {
-    return preg_quote($str, "/");
-}
+            if($setName == 'data') continue; // this is not a test set but additional import data
 
-class InputTest extends TestCase {
-    protected static $importDirs = array("inputs/test-imports");
-
-    protected static $testDirs = array(
-        "inputs" => "outputs",
-        "inputs_lessjs" => "outputs_lessjs",
-    );
-
-    public function setUp(): void {
-        $this->less = new Lessc();
-        $this->less->importDir = array_map(function($path) {
-            return __DIR__ . "/" . $path;
-        }, self::$importDirs);
+            $tests = glob($set . '/*.less');
+            foreach ($tests as $testFile) {
+                [$testName] = explode('.', basename($testFile));
+                yield [$setName, $testName];
+            }
+        }
     }
 
     /**
-     * @dataProvider fileNameProvider
+     * @dataProvider provideTestData
      */
-    public function testInputFile($inFname) {
-        if ($pattern = getenv("BUILD")) {
-            return $this->buildInput($inFname);
+    public function testInputOutput($set, $test)
+    {
+        $name = "$set/$test";
+        $inputDir = self::TESTDATA . '/less/' . $set;
+        $inputBase = $inputDir . '/' . $test;
+        $outputFile = self::TESTDATA . '/css/' . $set . '/' . $test . '.css';
+
+        if (is_file($inputBase . '.skip.less')) {
+            $this->markTestIncomplete("$name: needs work to pass");
         }
 
-        $outFname = self::outputNameFor($inFname);
-
-        if (!is_readable($outFname)) {
-            $this->fail("$outFname is missing, ".
-                "consider building tests with BUILD=true");
+        if (!is_file($outputFile)) {
+            $this->markTestSkipped("$name: output file missing");
         }
 
-        $input = file_get_contents($inFname);
-        $output = file_get_contents($outFname);
+        $lessc = new Lessc();
+        $lessc->importDir = [
+            $inputDir . '/imports',
+            $inputDir,
+            self::TESTDATA . '/less/data',
+        ];
 
-        $this->assertEquals($output, $this->less->parse($input));
-    }
-
-    public function fileNameProvider() {
-        return array_map(function($a) { return array($a); },
-            self::findInputNames());
-    }
-
-    // only run when env is set
-    public function buildInput($inFname) {
-        $css = $this->less->parse(file_get_contents($inFname));
-        file_put_contents(self::outputNameFor($inFname), $css);
-    }
-
-    public static function findInputNames($pattern= "*.less") {
-        $files = array();
-        foreach (self::$testDirs as $inputDir => $outputDir) {
-            $files = array_merge($files, glob(__DIR__ . "/" . $inputDir . "/" . $pattern));
+        if (is_file($inputBase . '.json')) {
+            $lessc->setVariables(json_decode(file_get_contents($inputBase . '.json'), true));
         }
 
-        return array_filter($files, "is_file");
-    }
+        $input = file_get_contents($inputBase . '.less');
+        $output = file_get_contents($outputFile);
 
-    public static function outputNameFor($input) {
-        $front = _quote(__DIR__ . "/");
-        $out = preg_replace("/^$front/", "", $input);
-
-        foreach (self::$testDirs as $inputDir => $outputDir) {
-            $in = _quote($inputDir . "/");
-            $rewritten = preg_replace("/$in/", $outputDir . "/", $out);
-            if ($rewritten != $out) {
-                $out = $rewritten;
-                break;
-            }
-        }
-
-        $out = preg_replace("/.less$/", ".css", $out);
-
-        return __DIR__ . "/" . $out;
+        $this->assertEquals($output, $lessc->compile($input), "Failed test $name");
     }
 }
