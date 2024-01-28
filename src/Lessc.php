@@ -23,13 +23,13 @@ use stdClass;
  * Converting LESS to CSS is a three stage process. The incoming file is parsed
  * by `Parser` into a syntax tree, then it is compiled into another tree
  * representing the CSS structure by `Lessc`. The CSS tree is fed into a
- * formatter, like `Formatter` which then outputs CSS as a string.
+ * formatter, which then outputs CSS as a string.
  *
  * During the first compile, all values are *reduced*, which means that their
- * types are brought to the lowest form before being dump as strings. This
+ * types are brought to the lowest form before being dumped as strings. This
  * handles math equations, variable dereferences, and the like.
  *
- * The `parse` function of `Lessc` is the entry point.
+ * The `compile` function of `Lessc` is the entry point.
  *
  * In summary:
  *
@@ -74,6 +74,7 @@ class Lessc
     protected $parseFile;
     protected $formatterName;
 
+    // region public API
 
     /**
      * Initialize the LESS Parser
@@ -87,6 +88,182 @@ class Lessc
 
         $this->registerLibraryFunctions();
     }
+
+    /**
+     * Compile the given LESS string into CSS
+     *
+     * @param string $string LESS code
+     * @param string|null $name optional filename to show in errors
+     * @throws Exception
+     * @throws ParserException
+     */
+    public function compile(string $string, ?string $name = null): string
+    {
+        $locale = setlocale(LC_NUMERIC, 0);
+        setlocale(LC_NUMERIC, "C");
+
+        $this->parser = $this->makeParser($name);
+        $root = $this->parser->parse($string);
+
+        $this->env = null;
+        $this->scope = null;
+        $this->allParsedFiles = [];
+
+        $this->formatter = $this->newFormatter();
+
+        if (!empty($this->registeredVars)) {
+            $this->injectVariables($this->registeredVars);
+        }
+
+        $this->sourceParser = $this->parser; // used for error messages
+
+        try {
+            $this->compileBlock($root);
+        } catch (Exception $e) {
+            $position = $this->sourceLoc !== -1 ? $this->sourceLoc : $root->count;
+            $this->sourceParser->throwError($e->getMessage(), $position, $e);
+        }
+
+        ob_start();
+        $this->formatter->block($this->scope);
+        $out = ob_get_clean();
+        setlocale(LC_NUMERIC, $locale);
+        return $out;
+    }
+
+    /**
+     * Parse the given File and return the compiled CSS.
+     *
+     * If an output file is specified, the compiled CSS will be written to that file.
+     *
+     * @param string $fname LESS file
+     * @param string|null $outFname optional output file
+     * @return int|string number of bytes written to file, or CSS if no output file
+     * @throws Exception
+     * @throws ParserException
+     */
+    public function compileFile(string $fname, ?string $outFname = null)
+    {
+        if (!is_readable($fname)) {
+            throw new Exception('load error: failed to find ' . $fname);
+        }
+
+        $pi = pathinfo($fname);
+
+        $oldImport = $this->importDir;
+
+        $this->importDir = (array)$this->importDir;
+        $this->importDir[] = $pi['dirname'] . '/';
+
+        $this->addParsedFile($fname);
+
+        $out = $this->compile(file_get_contents($fname), $fname);
+
+        $this->importDir = $oldImport;
+
+        if ($outFname !== null) {
+            return file_put_contents($outFname, $out);
+        }
+
+        return $out;
+    }
+
+    // endregion
+
+    // region configuration API
+
+    /**
+     * Should comments be preserved in the output?
+     *
+     * Default is false
+     *
+     * @param bool $preserve
+     */
+    public function setPreserveComments(bool $preserve): void
+    {
+        $this->preserveComments = $preserve;
+    }
+
+    /**
+     * Register a custom function to be available in LESS
+     *
+     * @param string $name name of function
+     * @param callable $func callback
+     */
+    public function registerFunction(string $name, callable $func): void
+    {
+        $this->libFunctions[$name] = $func;
+    }
+
+    /**
+     * Remove a function from being available in LESS
+     *
+     * @param string $name The name of the function to unregister
+     */
+    public function unregisterFunction(string $name): void
+    {
+        if (isset($this->libFunctions[$name])) {
+            unset($this->libFunctions[$name]);
+        }
+    }
+
+    /**
+     * Add additional variables to the parser
+     *
+     * Given variables are merged with any already set variables
+     *
+     * @param array $variables [name => value, ...]
+     */
+    public function setVariables($variables): void
+    {
+        $this->registeredVars = array_merge($this->registeredVars, $variables);
+    }
+
+    /**
+     * Get the currently set variables
+     *
+     * @return array [name => value, ...]
+     */
+    public function getVariables(): array
+    {
+        return $this->registeredVars;
+    }
+
+    /**
+     * Remove a currently set variable
+     *
+     * @param string $name
+     */
+    public function unsetVariable(string $name): void
+    {
+        if (isset($this->registeredVars[$name])) {
+            unset($this->registeredVars[$name]);
+        }
+    }
+
+    /**
+     * Set the directories to search for imports
+     *
+     * Overwrites any previously set directories
+     *
+     * @param string|string[] $dirs
+     */
+    public function setImportDir($dirs): void
+    {
+        $this->importDir = (array)$dirs;
+    }
+
+    /**
+     * Add an additional directory to search for imports
+     */
+    public function addImportDir(string $dir): void
+    {
+        $this->importDir = (array)$this->importDir;
+        $this->importDir[] = $dir;
+    }
+
+    // endregion
+
 
     /**
      * Register all the default functions
@@ -247,27 +424,27 @@ class Lessc
      */
     protected function compileBlock($block)
     {
-            switch ($block->type) {
-                case "root":
-                    $this->compileRoot($block);
-                    break;
-                case null:
-                    $this->compileCSSBlock($block);
-                    break;
-                case "media":
-                    $this->compileMedia($block);
-                    break;
-                case "directive":
-                    $name = "@" . $block->name;
-                    if (!empty($block->value)) {
-                        $name .= " " . $this->compileValue($this->reduce($block->value));
-                    }
+        switch ($block->type) {
+            case "root":
+                $this->compileRoot($block);
+                break;
+            case null:
+                $this->compileCSSBlock($block);
+                break;
+            case "media":
+                $this->compileMedia($block);
+                break;
+            case "directive":
+                $name = "@" . $block->name;
+                if (!empty($block->value)) {
+                    $name .= " " . $this->compileValue($this->reduce($block->value));
+                }
 
-                    $this->compileNestedBlock($block, [$name]);
-                    break;
-                default:
-                    throw new Exception("unknown block type: $block->type\n");
-            }
+                $this->compileNestedBlock($block, [$name]);
+                break;
+            default:
+                throw new Exception("unknown block type: $block->type\n");
+        }
     }
 
     /**
@@ -1502,75 +1679,6 @@ class Lessc
         }
     }
 
-    /**
-     * @throws Exception
-     */
-    public function compile($string, $name = null)
-    {
-        $locale = setlocale(LC_NUMERIC, 0);
-        setlocale(LC_NUMERIC, "C");
-
-        $this->parser = $this->makeParser($name);
-        $root = $this->parser->parse($string);
-
-        $this->env = null;
-        $this->scope = null;
-        $this->allParsedFiles = [];
-
-        $this->formatter = $this->newFormatter();
-
-        if (!empty($this->registeredVars)) {
-            $this->injectVariables($this->registeredVars);
-        }
-
-        $this->sourceParser = $this->parser; // used for error messages
-
-        try {
-            $this->compileBlock($root);
-        } catch (Exception $e) {
-            $position = $this->sourceLoc !== -1 ? $this->sourceLoc : $root->count;
-            $this->sourceParser->throwError($e->getMessage(), $position, $e);
-        }
-
-        ob_start();
-        $this->formatter->block($this->scope);
-        $out = ob_get_clean();
-        setlocale(LC_NUMERIC, $locale);
-        return $out;
-    }
-
-    /**
-     * Parse the given File and return the compiled CSS.
-     *
-     * If an output file is specified, the compiled CSS will be written to that file.
-     *
-     * @throws Exception
-     */
-    public function compileFile(string $fname, ?string $outFname = null)
-    {
-        if (!is_readable($fname)) {
-            throw new Exception('load error: failed to find ' . $fname);
-        }
-
-        $pi = pathinfo($fname);
-
-        $oldImport = $this->importDir;
-
-        $this->importDir = (array)$this->importDir;
-        $this->importDir[] = $pi['dirname'] . '/';
-
-        $this->addParsedFile($fname);
-
-        $out = $this->compile(file_get_contents($fname), $fname);
-
-        $this->importDir = $oldImport;
-
-        if ($outFname !== null) {
-            return file_put_contents($outFname, $out);
-        }
-
-        return $out;
-    }
 
     /**
      * Based on explicit input/output files does a full change check on cache before compiling.
@@ -1744,41 +1852,6 @@ class Lessc
         return new $className;
     }
 
-    public function setPreserveComments($preserve)
-    {
-        $this->preserveComments = $preserve;
-    }
-
-    public function registerFunction($name, $func)
-    {
-        $this->libFunctions[$name] = $func;
-    }
-
-    public function unregisterFunction($name)
-    {
-        unset($this->libFunctions[$name]);
-    }
-
-    public function setVariables($variables)
-    {
-        $this->registeredVars = array_merge($this->registeredVars, $variables);
-    }
-
-    public function unsetVariable($name)
-    {
-        unset($this->registeredVars[$name]);
-    }
-
-    public function setImportDir($dirs)
-    {
-        $this->importDir = (array)$dirs;
-    }
-
-    public function addImportDir($dir)
-    {
-        $this->importDir = (array)$this->importDir;
-        $this->importDir[] = $dir;
-    }
 
     public function allParsedFiles()
     {
