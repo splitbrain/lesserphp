@@ -71,7 +71,6 @@ class Lessc
     protected $sourceLoc = null;
 
     protected static $nextImportId = 0; // uniquely identify imports
-    protected $parseFile;
     protected $formatterName;
 
     // region public API
@@ -79,13 +78,8 @@ class Lessc
     /**
      * Initialize the LESS Parser
      */
-    public function __construct($fname = null)
+    public function __construct()
     {
-        if ($fname !== null) {
-            // used for deprecated parse method
-            $this->parseFile = $fname;
-        }
-
         $this->registerLibraryFunctions();
     }
 
@@ -1677,38 +1671,6 @@ class Lessc
 
             $this->set($name, $value);
         }
-    }
-
-
-    /**
-     * parse and compile buffer
-     * @throws Exception
-     * @deprecated
-     */
-    public function parse($str = null, $initialVariables = null)
-    {
-        if (is_array($str)) {
-            $initialVariables = $str;
-            $str = null;
-        }
-
-        $oldVars = $this->registeredVars;
-        if ($initialVariables !== null) {
-            $this->setVariables($initialVariables);
-        }
-
-        if ($str == null) {
-            if (empty($this->parseFile)) {
-                throw new Exception("nothing to parse");
-            }
-
-            $out = $this->compileFile($this->parseFile);
-        } else {
-            $out = $this->compile($str);
-        }
-
-        $this->registeredVars = $oldVars;
-        return $out;
     }
 
     protected function makeParser($name)
