@@ -1,46 +1,9 @@
-    title: v0.6.0 documentation
-    link_to_home: true
---
-
-<h2 skip="true">Documentation v0.6.0</h2>
-
-<div style="margin-bottom: 1em;">$index</div>
-
-**lesserphp** is a compiler that generates CSS from a superset language which
-adds a collection of convenient features often seen in other languages. All CSS
-is compatible with LESS, so you can start using new features with your existing CSS.
-
-It is designed to be compatible with [less.js](http://lesscss.org), and suitable
-as a drop in replacement for PHP projects.
-
-## Getting Started
-
-The homepage for **lesserphp** can be found at [http://leafo.net/lessphp/][1].
-
-You can follow development at the project's [GitHub][2].
-
-Including **lesserphp** in your project is as simple as dropping the single
-include file into your code base and running the appropriate compile method as
-described in the [PHP Interface](#php_interface).
-
-  [1]: http://leafo.net/lessphp "lessphp homepage"
-  [2]: https://github.com/MarcusSchwarz/lesserphp "lesserphp GitHub page"
-
-## Installation
-
-**lesserphp** is distributed entirely in a single stand-alone file. Download the
-latest version from [GitHub][2].
-
-Development versions can also be downloading from GitHub.
-
-Place `lessphp.inc.php` in a location available to your PHP scripts, and
-include it. That's it! you're ready to begin.
+# Documentation
 
 ## The Language
 
-**lesserphp** is very easy to learn because it generally functions how you would
-expect it to. If you feel something is challenging or missing, feel free to
-open an issue on the [bug tracker](https://github.com/MarcusSchwarz/lesserphp/issues).
+LESS is very easy to learn because it generally functions how you would
+expect it to. 
 
 It is also easy to learn because any standards-compliant CSS code is valid LESS
 code. You are free to gradually enhance your existing CSS code base with LESS

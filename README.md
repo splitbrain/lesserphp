@@ -1,19 +1,36 @@
-# lesserphp (reloaded)
+# LesserPHP (reloaded)
 
-`lesserphp` is a compiler for LESS written in PHP. It is based on lessphp by @leafo. The original has been abandoned in 2014. The fork by @MarkusSchwarz has been mostly abandoned in 2021. There are other forks with dubious status.
+LesserPHP is a compiler for LESS written in PHP. It is based on `lessphp` by [@leafo](https://github.com/leafo/lessphp). The original has been abandoned in 2014. The fork by [@MarcusSchwarz](https://github.com/MarcusSchwarz/lesserphp) has been mostly abandoned in 2021. There are other forks with dubious status.
 
-This fork is meant to be a modern refactoring of the code, so it will be easier to maintain. It is mostly meant as a stable base for DokuWiki.
+This is an opinionated fork with the goal to modernize the code base enough to be somewhat easier to maintain without completely rewriting it. It is meant to be used as a stable base for [DokuWiki](https://www.dokuwiki.org). This means features not needed for this goal are removed. 
 
-This is a work in progress.
+Please note that is fork is based on the `0.6.0-dev` branch of `MarcusSchwarz/lesserphp`, not the much modernized `master` branch. This has two reasons:
 
-Original documentation is available http://leafo.net/lessphp/docs/ but is probably out of date.
+1. The `master` was not up-to-date with all the bug fixes in the `0.6.0-dev` branch (some of which had been contributed by DokuWiki developers)
+2. I simply only noticed the considerable refactoring Marcus had done in the `master` branch after I had already started my own refactoring. I did not want to start over again. His approach is much more radical than mine and probably took more than the long weekend I had available for this.  
 
-Here's a quick tutorial:
+## Contributing and Bugs
 
-### How to use in your PHP project
+Please report bugs to the [issue tracker](https://github.com/splitbrain/lesserphp/issues). Fixes are only likely when DokuWiki needs them, or you provide a pull request.
 
+Feature Requests will be ignored unless accompanied by a pull request.
 
-The typical flow of **lesserphp** is to create a new instance of `Lessc`,
+## How to use in your PHP project
+
+Don't. You really wouldn't want to start a new project using LESS. It simply seems that SASS has won the battle. Or maybe even skip the whole CSS preprocessor thing - modern CSS is quite powerful on its own. 
+
+If you are already using `lessphp` in one of it's many forks, using this one isn't too different.
+
+You can still look at the [original documentation](https://leafo.net/lessphp/docs/) for the most part. The API is mostly the same. Refer to the [upstream documentation](https://lesscss.org/features/) the [bundled Documentation](docs/docs.md) for the LESS syntax itself. Keep in mind that some more modern features are not supported by LesserPHP.
+
+To install it, use composer:
+
+```bash
+composer require ...
+FIXME - not yet on packagist
+```
+
+The typical flow of LesserPHP is to create a new instance of `Lessc`,
 configure it how you like, then tell it to compile something using one built in
 compile methods.
 
@@ -23,7 +40,7 @@ The `compile` method compiles a string of LESS code to CSS.
 <?php
 require __DIR__ . '/vendor/autoload.php';
 
-$less = new Lessc;
+$less = new LesserPHP\Lessc;
 echo $less->compile(".block { padding: 3 + 4px }");
 ```
 
@@ -35,63 +52,14 @@ result or write it to the path specified by an optional second argument.
 echo $less->compileFile("input.less");
 ```
 
-The `checkedCompile` method is like `compileFile`, but it only compiles if the output
-file doesn't exist or it's older than the input file:
 
-```php
-<?php
-$less->checkedCompile("input.less", "output.css");
-```
-
-If there any problem compiling your code, an exception is thrown with a helpful message:
+If there's any problem compiling your code, an exception is thrown with a helpful message:
 
 ```php
 <?php
 try {
   $less->compile("invalid LESS } {");
-} catch (\Exception $e) {
-  echo "fatal error: " . $e->getMessage();
+} catch (LesserPHP\ParserException $e) {
+  echo $e->getMessage();
 }
 ```
-
-The `lessc` object can be configured through an assortment of instance methods.
-Some possible configuration options include [changing the output format][1],
-[setting variables from PHP][2], and [controlling the preservation of
-comments][3], writing [custom functions][4] and much more. It's all described
-in [the documentation][0].
-
-
- [0]: http://leafo.net/lessphp/docs/
- [1]: http://leafo.net/lessphp/docs/#output_formatting
- [2]: http://leafo.net/lessphp/docs/#setting_variables_from_php
- [3]: http://leafo.net/lessphp/docs/#preserving_comments
- [4]: http://leafo.net/lessphp/docs/#custom_functions
-
-
-### How to use from the command line
-
-An additional script has been included to use the compiler from the command
-line. In the simplest invocation, you specify an input file and the compiled
-css is written to standard out:
-
-    $ plessc input.less > output.css
-
-Using the -r flag, you can specify LESS code directly as an argument or, if
-the argument is left off, from standard in:
-
-    $ plessc -r "my less code here"
-
-Finally, by using the -w flag you can watch a specified input file and have it
-compile as needed to the output file:
-
-    $ plessc -w input-file output-file
-
-Errors from watch mode are written to standard out.
-
-The -f flag sets the [output formatter][1]. For example, to compress the
-output run this:
-
-    $ plessc -f=compressed myfile.less
-
-For more help, run `plessc --help`
-
