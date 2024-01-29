@@ -14,7 +14,7 @@ The exception are all files unter `test-data/lesserphp/` which have been written
 
 Input files ending in `.skip.less` are marked as a skipped test. These tests still need to be manually checked and either be adjusted to the capabilities of LesserPHP or LesserPHP needs to be improved to pass the test. 
 
-Files and directories ending in `.isabled` are completely ignored. These tests are probably not applicable to LesserPHP or need major changes.
+Files and directories ending in `.disabled` are completely ignored. These tests are probably not applicable to LesserPHP or need major changes.
 
 ## ApiTest.php
 
