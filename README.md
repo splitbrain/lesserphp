@@ -26,8 +26,7 @@ You can still look at the [original documentation](https://leafo.net/lessphp/doc
 To install it, use composer:
 
 ```bash
-composer require ...
-FIXME - not yet on packagist
+composer require splitbrain/lesserphp
 ```
 
 The typical flow of LesserPHP is to create a new instance of `Lessc`,

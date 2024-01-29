@@ -1,5 +1,5 @@
 {
-    "name": "marcusschwarz/lesserphp",
+    "name": "splitbrain/lesserphp",
     "type": "library",
     "description": "lesserphp is a compiler for LESS written in PHP based on leafo's lessphp.",
     "homepage": "https://www.maswaba.de/lesserphpdocs/",
@@ -17,8 +17,12 @@
             "name": "Marcus Schwarz",
             "email": "github@maswaba.de",
             "homepage": "https://www.maswaba.de"
+        },
+        {
+            "name": "Andreas Gohr",
+            "email": "andi@splitbrain.org",
+            "homepage": "https://www.splitbrain.org"
         }
-
     ],
     "autoload": {
         "psr-4": {
