@@ -54,7 +54,8 @@ class Lessc
     protected $registeredVars = [];
     protected $preserveComments = false;
 
-    public $importDisabled = false;
+    /** @var bool Should imports be disabled? */
+    protected $importDisabled = false;
 
     /** @var string A list of directories used to search for imported files */
     protected $importDir = [];
@@ -253,6 +254,19 @@ class Lessc
     {
         $this->importDir = (array)$this->importDir;
         $this->importDir[] = $dir;
+    }
+
+    /**
+     * Enable or disable import statements
+     *
+     * There is usually no need to disable imports
+     * 
+     * @param bool $enable
+     * @return void
+     */
+    public function enableImports(bool $enable): void
+    {
+        $this->importDisabled = !$enable;
     }
 
     // endregion

@@ -123,7 +123,7 @@ EOD;
 
     public function testDisableImport()
     {
-        $this->less->importDisabled = true;
+        $this->less->enableImports(false);
         $this->assertEquals(
             '/* import disabled */',
             trim($this->less->compile("@import 'file3';"))
