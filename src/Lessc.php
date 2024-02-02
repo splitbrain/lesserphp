@@ -71,15 +71,16 @@ class Lessc
     public $env;
     public $scope;
 
-    /** @var string[] list of all files that have been parsed, to avoid circular imports */
-    protected $allParsedFiles = [];
+    /** @var array [file => mtime] list of all files that have been parsed, to avoid circular imports */
+    protected array $allParsedFiles = [];
 
-    // set to the parser that generated the current line when compiling
-    // so we know how to create error messages
-    protected $sourceParser = null;
-    protected $sourceLoc = null;
+    /** @var Parser|null The currently used Parser instance. Used when creating error messages */
+    protected ?Parser $sourceParser = null;
+    /** @var int The position in the current parsing step  */
+    protected int $sourceLoc = -1;
 
-    protected static $nextImportId = 0; // uniquely identify imports
+    /** @var int counter to uniquely identify imports */
+    protected static int $nextImportId = 0;
 
     // region public API
 
@@ -1718,13 +1719,12 @@ class Lessc
         return $parser;
     }
 
-
-    public function allParsedFiles()
-    {
-        return $this->allParsedFiles;
-    }
-
-    public function addParsedFile($file)
+    /**
+     * Add the given file to the list of parsed files
+     *
+     * @param $file
+     */
+    protected function addParsedFile($file): void
     {
         $this->allParsedFiles[realpath($file)] = filemtime($file);
     }
