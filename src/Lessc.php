@@ -66,8 +66,6 @@ class Lessc
     /** @var FormatterClassic|null The formatter for the output */
     public ?FormatterClassic $formatter = null;
 
-
-    public Parser $parser;
     public $env;
     public $scope;
 
@@ -105,8 +103,8 @@ class Lessc
         $locale = setlocale(LC_NUMERIC, 0);
         setlocale(LC_NUMERIC, 'C');
 
-        $this->parser = $this->makeParser($name);
-        $root = $this->parser->parse($string);
+        $parser = $this->makeParser($name);
+        $root = $parser->parse($string);
 
         $this->env = null;
         $this->scope = null;
@@ -118,7 +116,7 @@ class Lessc
             $this->injectVariables($this->registeredVars);
         }
 
-        $this->sourceParser = $this->parser; // used for error messages
+        $this->sourceParser = $parser; // used for error messages
 
         try {
             $this->compileBlock($root);
