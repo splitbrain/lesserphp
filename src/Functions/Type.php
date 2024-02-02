@@ -21,7 +21,7 @@ class Type extends AbstractFunctionCollection
             'isstring' => [$this, 'isstring'],
             'iscolor' => [$this, 'iscolor'],
             'iskeyword' => [$this, 'iskeyword'],
-            //'isurl' => [$this, 'isurl'],
+            'isurl' => [$this, 'isurl'],
             'ispixel' => [$this, 'ispixel'],
             'isem' => [$this, 'isem'],
             'isrem' => [$this, 'isrem'],
@@ -73,7 +73,15 @@ class Type extends AbstractFunctionCollection
         return Util::toBool($value[0] == 'keyword');
     }
 
-    // isurl is missing
+    /**
+     * Returns true if a value is a url, false otherwise
+     *
+     * @link https://lesscss.org/functions/#type-functions-isurl
+     */
+    public function isurl(array $value): array
+    {
+        return Util::toBool($value[0] == 'function' && $value[1] == 'url');
+    }
 
     /**
      * Returns true if a value is a number in pixels, false otherwise

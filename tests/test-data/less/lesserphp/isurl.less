@@ -1,0 +1,10 @@
+.isurl {
+  one: isurl(#ff0);     // false
+  two: isurl(blue);     // false
+  three: isurl("string"); // false
+  four: isurl(1234);     // false
+  five: isurl(56px);     // false
+  six: isurl(7.8%);     // false
+  seven: isurl(keyword);  // false
+  eight: isurl(url(...)); // true
+}
