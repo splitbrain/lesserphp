@@ -307,7 +307,7 @@ class Parser
                 $hidden = true;
                 if (!isset($block->args)) {
                     foreach ($block->tags as $tag) {
-                        if (!is_string($tag) || $tag[0] != $this->lessc->mPrefix) {
+                        if (!is_string($tag) || $tag[0] != Constants::MPREFIX) {
                             $hidden = false;
                             break;
                         }
@@ -364,8 +364,8 @@ class Parser
     {
         // move @ tags out of variable namespace
         foreach ($tags as &$tag) {
-            if ($tag[0] == $this->lessc->vPrefix)
-                $tag[0] = $this->lessc->mPrefix;
+            if ($tag[0] == Constants::VPREFIX)
+                $tag[0] = Constants::MPREFIX;
         }
         return $tags;
     }
@@ -997,7 +997,7 @@ class Parser
                     // escape parent selector, (yuck)
                     foreach ($str[2] as &$chunk) {
                         if (is_string($chunk)) {
-                            $chunk = str_replace($this->lessc->parentSelector, "$&$", $chunk);
+                            $chunk = str_replace(Constants::PARENT_SELECTOR, "$&$", $chunk);
                         }
                     }
 
@@ -1157,12 +1157,12 @@ class Parser
     protected function variable(&$name)
     {
         $s = $this->seek();
-        if ($this->literal($this->lessc->vPrefix, false) &&
+        if ($this->literal(Constants::VPREFIX, false) &&
             ($this->variable($sub) || $this->keyword($name))) {
             if (!empty($sub)) {
                 $name = ['variable', $sub];
             } else {
-                $name = $this->lessc->vPrefix . $name;
+                $name = Constants::VPREFIX . $name;
             }
             return true;
         }

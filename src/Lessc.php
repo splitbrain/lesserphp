@@ -54,10 +54,6 @@ class Lessc
     protected $registeredVars = [];
     protected $preserveComments = false;
 
-    public $vPrefix = '@'; // prefix of abstract properties
-    public $mPrefix = '$'; // prefix of abstract blocks
-    public $parentSelector = '&';
-
     public $importDisabled = false;
     public $importDir = [];
 
@@ -576,7 +572,7 @@ class Lessc
                     break;
                 case 'assign':
                     $stack[] = $prop;
-                    if (isset($prop[1][0]) && $prop[1][0] == $this->vPrefix) {
+                    if (isset($prop[1][0]) && $prop[1][0] == Constants::VPREFIX) {
                         $vars = array_merge($vars, $stack);
                     } else {
                         $other = array_merge($other, $stack);
@@ -674,15 +670,15 @@ class Lessc
         return $this->multiplyMedia($env->parent, $out);
     }
 
-    protected function expandParentSelectors(&$tag, $replace)
+    protected function expandParentSelectors(&$tag, $replace): int
     {
         $parts = explode("$&$", $tag);
         $count = 0;
         foreach ($parts as &$part) {
-            $part = str_replace($this->parentSelector, $replace, $part, $c);
+            $part = str_replace(Constants::PARENT_SELECTOR, $replace, $part, $c);
             $count += $c;
         }
-        $tag = implode($this->parentSelector, $parts);
+        $tag = implode(Constants::PARENT_SELECTOR, $parts);
         return $count;
     }
 
@@ -972,7 +968,7 @@ class Lessc
         switch ($prop[0]) {
             case 'assign':
                 [, $name, $value] = $prop;
-                if ($name[0] == $this->vPrefix) {
+                if ($name[0] == Constants::VPREFIX) {
                     $this->set($name, $value);
                 } else {
                     $out->lines[] = $this->formatter->property(
@@ -1046,7 +1042,7 @@ class Lessc
                         if ($suffix !== null &&
                             $subProp[0] == 'assign' &&
                             is_string($subProp[1]) &&
-                            $subProp[1][0] != $this->vPrefix) {
+                            $subProp[1][0] != Constants::VPREFIX) {
                             $subProp[2] = ['list', ' ', [$subProp[2], ['keyword', $suffix]]];
                         }
 
@@ -1270,7 +1266,7 @@ class Lessc
             case 'interpolate':
                 $reduced = $this->reduce($value[1]);
                 $var = $this->compileValue($reduced);
-                $res = $this->reduce(['variable', $this->vPrefix . $var]);
+                $res = $this->reduce(['variable', Constants::VPREFIX . $var]);
 
                 if ($res[0] == 'raw_color') {
                     $res = Color::coerceColor($res);
@@ -1283,7 +1279,7 @@ class Lessc
                 $key = $value[1];
                 if (is_array($key)) {
                     $key = $this->reduce($key);
-                    $key = $this->vPrefix . $this->compileValue($this->unwrap($key));
+                    $key = Constants::VPREFIX . $this->compileValue($this->unwrap($key));
                 }
 
                 $seen =& $this->env->seenNames;
@@ -1615,7 +1611,7 @@ class Lessc
         // track scope to evaluate
         $scope_secondary = [];
 
-        $isArguments = $name == $this->vPrefix . 'arguments';
+        $isArguments = $name == Constants::VPREFIX . 'arguments';
         while ($current) {
             if ($isArguments && isset($current->arguments)) {
                 return ['list', ' ', $current->arguments];

@@ -4,7 +4,7 @@ LesserPHP is a compiler for LESS written in PHP. It is based on `lessphp` by [@l
 
 This is an opinionated fork with the goal to modernize the code base enough to be somewhat easier to maintain without completely rewriting it. It is meant to be used as a stable base for [DokuWiki](https://www.dokuwiki.org). This means features not needed for this goal are removed. 
 
-Please note that is fork is based on the `0.6.0-dev` branch of `MarcusSchwarz/lesserphp`, not the much modernized `master` branch. This has two reasons:
+Please note that this fork is based on the `0.6.0-dev` branch of `MarcusSchwarz/lesserphp`, not the much modernized `master` branch. This has two reasons:
 
 1. The `master` was not up-to-date with all the bug fixes in the `0.6.0-dev` branch (some of which had been contributed by DokuWiki developers)
 2. I simply only noticed the considerable refactoring Marcus had done in the `master` branch after I had already started my own refactoring. I did not want to start over again. His approach is much more radical than mine and probably took more than the long weekend I had available for this.  

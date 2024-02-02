@@ -7,6 +7,14 @@ class Constants
     public const TRUE = ['keyword', 'true'];
     public const FALSE = ['keyword', 'false'];
 
+    /** @var string prefix of abstract properties */
+    public const VPREFIX = '@';
+    /** @var string prefix of abstract blocks */
+    public const MPREFIX = '$';
+
+    /** @var string Parent Selector in LESS */
+    public const PARENT_SELECTOR = '&';
+
     /** @var string Convertable lenght units */
     public const LENGTH_UNITS = ['px', 'm', 'cm', 'mm', 'in', 'pt', 'pc'];
 

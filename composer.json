@@ -2,7 +2,6 @@
     "name": "splitbrain/lesserphp",
     "type": "library",
     "description": "lesserphp is a compiler for LESS written in PHP based on leafo's lessphp.",
-    "homepage": "https://www.maswaba.de/lesserphpdocs/",
     "license": [
         "MIT",
         "GPL-3.0"
