@@ -49,32 +49,36 @@ class Lessc
     protected $importDir = [];
 
     /** @var bool Should imports be disabled? */
-    protected $importDisabled = false;
+    protected bool $importDisabled = false;
 
     /** @var null|int Round numbers to this precision FIXME currently not settable */
-    protected $numberPrecision = null;
+    protected ?int $numberPrecision = null;
 
     /** @var bool Should comments be preserved in the output? */
-    protected $preserveComments = false;
+    protected bool $preserveComments = false;
 
     /** @var array List of all functions registered to be available in LESS */
-    protected $libFunctions = [];
+    protected array $libFunctions = [];
 
     /** @var array List of all registered variables */
-    protected $registeredVars = [];
+    protected array $registeredVars = [];
 
     /** @var FormatterClassic|null The formatter for the output */
-    public ?FormatterClassic $formatter = null;
+    protected ?FormatterClassic $formatter = null;
 
-    public $env;
-    public $scope;
+    /** @var stdClass|null Environment FIXME should probably be its own proper class */
+    protected ?stdClass $env = null;
+
+    /** @var stdClass|null The currently parsed block FIXME should probably be its own proper class */
+    protected ?stdClass $scope;
 
     /** @var array [file => mtime] list of all files that have been parsed, to avoid circular imports */
     protected array $allParsedFiles = [];
 
     /** @var Parser|null The currently used Parser instance. Used when creating error messages */
     protected ?Parser $sourceParser = null;
-    /** @var int The position in the current parsing step  */
+
+    /** @var int The position in the current parsing step (in $sourceParser)  */
     protected int $sourceLoc = -1;
 
     /** @var int counter to uniquely identify imports */
