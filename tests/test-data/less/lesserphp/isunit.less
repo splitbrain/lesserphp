@@ -1,0 +1,11 @@
+.isunit {
+  one: isunit(11px, px); // true
+  two: isunit(2.2%, px); // false
+  three: isunit(33px, rem); // false
+  four: isunit(4rem, rem); // true
+  five: isunit(56px, "%"); // false
+  six: isunit(7.8%, '%'); // true
+  seven: isunit(1234, em); // false
+  eight: isunit(#ff0, pt); // false
+  nine: isunit("mm", mm); // false
+}
