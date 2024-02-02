@@ -22,7 +22,6 @@ class Parser
 {
 
     public $eatWhiteDefault;
-    public Lessc $lessc;
     public $sourceName;
     public $writeComments;
     public $count;
@@ -90,12 +89,12 @@ class Parser
 
     protected $currentProperty;
 
-    public function __construct(Lessc $lessc, $sourceName = null)
+    /**
+     * @param string|null $sourceName name used for error messages
+     */
+    public function __construct(?string $sourceName = null)
     {
         $this->eatWhiteDefault = true;
-        // reference to less needed for vPrefix, mPrefix, and parentSelector
-        $this->lessc = $lessc;
-
         $this->sourceName = $sourceName; // name used for error messages
 
         $this->writeComments = false;

@@ -1708,7 +1708,7 @@ class Lessc
     protected function injectVariables($args)
     {
         $this->pushEnv();
-        $parser = new Parser($this, __METHOD__);
+        $parser = new Parser(__METHOD__);
         foreach ($args as $name => $strValue) {
             if ($name[0] != '@') $name = '@' . $name;
             $parser->count = 0;
@@ -1721,9 +1721,14 @@ class Lessc
         }
     }
 
-    protected function makeParser($name)
+    /**
+     * Create a new parser instance
+     *
+     * @param string|null $name A name to identify the parser in error messages
+     */
+    protected function makeParser(?string $name): Parser
     {
-        $parser = new Parser($this, $name);
+        $parser = new Parser($name);
         $parser->writeComments = $this->preserveComments;
 
         return $parser;
