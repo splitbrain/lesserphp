@@ -2,6 +2,9 @@
 
 namespace LesserPHP\tests;
 
+use LesserPHP\FormatterClassic;
+use LesserPHP\FormatterCompressed;
+use LesserPHP\FormatterLessJs;
 use LesserPHP\Lessc;
 use PHPUnit\Framework\TestCase;
 
@@ -170,7 +173,7 @@ EOD;
                 }
             }";
 
-        $this->less->setFormatter('compressed');
+        $this->less->setFormatter(new FormatterCompressed());
         $this->assertEquals(
             trim("
 div,pre{color:blue;}div span,div .big,div hello.world,pre span,pre .big,pre hello.world{height:20px;color:#fff;}
@@ -179,7 +182,7 @@ div,pre{color:blue;}div span,div .big,div hello.world,pre span,pre .big,pre hell
         );
 
         // TODO: fix the output order of tags
-        $this->less->setFormatter('lessjs');
+        $this->less->setFormatter(new FormatterLessJs());
         $this->assertEquals(
             trim("
 div,
@@ -199,7 +202,7 @@ pre hello.world {
             trim($this->less->compile($src))
         );
 
-        $this->less->setFormatter('classic');
+        $this->less->setFormatter(new FormatterClassic());
         $this->assertEquals(
             trim("
 div, pre { color:blue; }

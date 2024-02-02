@@ -45,23 +45,33 @@ use stdClass;
  */
 class Lessc
 {
-    public Parser $parser;
-    public $env;
-    public $scope;
-    public FormatterClassic $formatter;
-
-    protected $libFunctions = [];
-    protected $registeredVars = [];
-    protected $preserveComments = false;
+    /** @var string A list of directories used to search for imported files */
+    protected $importDir = [];
 
     /** @var bool Should imports be disabled? */
     protected $importDisabled = false;
 
-    /** @var string A list of directories used to search for imported files */
-    protected $importDir = [];
-
+    /** @var null|int Round numbers to this precision FIXME currently not settable */
     protected $numberPrecision = null;
 
+    /** @var bool Should comments be preserved in the output? */
+    protected $preserveComments = false;
+
+    /** @var array List of all functions registered to be available in LESS */
+    protected $libFunctions = [];
+
+    /** @var array List of all registered variables */
+    protected $registeredVars = [];
+
+    /** @var FormatterClassic|null The formatter for the output */
+    public ?FormatterClassic $formatter = null;
+
+
+    public Parser $parser;
+    public $env;
+    public $scope;
+
+    /** @var string[] list of all files that have been parsed, to avoid circular imports */
     protected $allParsedFiles = [];
 
     // set to the parser that generated the current line when compiling
@@ -70,7 +80,6 @@ class Lessc
     protected $sourceLoc = null;
 
     protected static $nextImportId = 0; // uniquely identify imports
-    protected $formatterName;
 
     // region public API
 
@@ -102,7 +111,7 @@ class Lessc
         $this->scope = null;
         $this->allParsedFiles = [];
 
-        $this->formatter = $this->newFormatter();
+        if ($this->formatter === null) $this->setFormatter();
 
         if (!empty($this->registeredVars)) {
             $this->injectVariables($this->registeredVars);
@@ -260,13 +269,28 @@ class Lessc
      * Enable or disable import statements
      *
      * There is usually no need to disable imports
-     * 
+     *
      * @param bool $enable
      * @return void
      */
     public function enableImports(bool $enable): void
     {
         $this->importDisabled = !$enable;
+    }
+
+    /**
+     * Set the formatter to use for output
+     *
+     * @param FormatterClassic|null $formatter Null for the default LessJs formatter
+     * @return void
+     */
+    public function setFormatter(?FormatterClassic $formatter = null)
+    {
+        if ($formatter === null) {
+            $formatter = new FormatterLessJs();
+        }
+
+        $this->formatter = $formatter;
     }
 
     // endregion
@@ -1692,23 +1716,6 @@ class Lessc
         $parser->writeComments = $this->preserveComments;
 
         return $parser;
-    }
-
-    public function setFormatter($name)
-    {
-        $this->formatterName = $name;
-    }
-
-    protected function newFormatter()
-    {
-        $className = FormatterLessJs::class;
-        if (!empty($this->formatterName)) {
-            if (!is_string($this->formatterName))
-                return $this->formatterName; // FIXME this seems weird? Does formatterName contain a class instance?
-            $className = '\\LesserPHP\\Formatter' . ucfirst($this->formatterName);
-        }
-
-        return new $className;
     }
 
 

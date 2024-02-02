@@ -43,6 +43,7 @@
     "scripts": {
         "test": "phpunit --verbose",
         "check": "phpcs -p -s",
-        "fix": "phpcbf"
+        "fix": "phpcbf",
+        "rector": "rector process"
     }
 }
