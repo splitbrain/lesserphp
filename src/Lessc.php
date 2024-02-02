@@ -320,6 +320,8 @@ class Lessc
 
     /**
      * attempts to find the path of an import url, returns null for css files
+     *
+     * @internal parser internal method
      */
     public function findImport(string $url): ?string
     {
@@ -344,6 +346,9 @@ class Lessc
         return is_file($name);
     }
 
+    /**
+     * @internal parser internal method
+     */
     public static function compressList($items, $delim)
     {
         if (!isset($items[1]) && isset($items[0])) return $items[0];
@@ -1152,6 +1157,7 @@ class Lessc
      * The input is expected to be reduced. This function will not work on
      * things like expressions and variables.
      * @throws Exception
+     * @internal parser internal method
      */
     public function compileValue($value)
     {
@@ -1222,6 +1228,7 @@ class Lessc
      * Utility func to unquote a string
      *
      * @todo this not really a good name for this function
+     * @internal parser internal method
      */
     public function unwrap(array $arg): array
     {
@@ -1302,6 +1309,7 @@ class Lessc
 
     /**
      * @throws Exception
+     * @internal parser internal method
      */
     public function reduce($value, $forExpression = false)
     {
