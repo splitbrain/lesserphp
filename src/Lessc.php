@@ -1730,28 +1730,4 @@ class Lessc
     {
         $this->allParsedFiles[realpath($file)] = filemtime($file);
     }
-
-    /**
-     * compile file $in to file $out if $in is newer than $out
-     * returns true when it compiles, false otherwise
-     * @throws Exception
-     */
-    public static function ccompile($in, $out, $less = null)
-    {
-        if ($less === null) {
-            $less = new self;
-        }
-        return $less->checkedCompile($in, $out);
-    }
-
-    /**
-     * @throws Exception
-     */
-    public static function cexecute($in, $force = false, $less = null)
-    {
-        if ($less === null) {
-            $less = new self;
-        }
-        return $less->cachedCompile($in, $force);
-    }
 }
