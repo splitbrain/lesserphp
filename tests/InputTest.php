@@ -50,11 +50,11 @@ class InputTest extends TestCase
         }
 
         $lessc = new Lessc();
-        $lessc->importDir = [
+        $lessc->setImportDir([
             $inputDir . '/imports',
             $inputDir,
             self::TESTDATA . '/less/data',
-        ];
+        ]);
 
         if (is_file($inputBase . '.json')) {
             $lessc->setVariables(json_decode(file_get_contents($inputBase . '.json'), true));

@@ -55,7 +55,9 @@ class Lessc
     protected $preserveComments = false;
 
     public $importDisabled = false;
-    public $importDir = [];
+
+    /** @var string A list of directories used to search for imported files */
+    protected $importDir = [];
 
     protected $numberPrecision = null;
 

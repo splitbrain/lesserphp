@@ -10,7 +10,7 @@ class ApiTest extends TestCase
     public function setUp(): void
     {
         $this->less = new Lessc();
-        $this->less->importDir = [__DIR__ . '/test-data/less/lesserphp/imports'];
+        $this->less->setImportDir([__DIR__ . '/test-data/less/lesserphp/imports']);
     }
 
     public function testPreserveComments()
