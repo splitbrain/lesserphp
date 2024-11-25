@@ -8,6 +8,8 @@ use PHPUnit\Framework\TestCase;
 
 class ErrorHandlingTest extends TestCase
 {
+    protected Lessc $less;
+
     public function setUp(): void
     {
         $this->less = new Lessc();

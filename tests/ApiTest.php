@@ -10,6 +10,8 @@ use PHPUnit\Framework\TestCase;
 
 class ApiTest extends TestCase
 {
+    protected Lessc $less;
+
     public function setUp(): void
     {
         $this->less = new Lessc();
